@@ -11,20 +11,24 @@ const EFFORTS = new Set(["low", "medium", "high"]);
 const reply = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
 const fail = (code: string, status = 200) => reply({ error: { code } }, status);
-function tokenRole(req: Request): string | null {
-  const jwt = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
+// Ask Supabase Auth who sent this. That works with any signing key, and only a signed-in user gets through, never the public key.
+async function signedIn(req: Request): Promise<boolean> {
+  const auth = req.headers.get("Authorization") || "";
+  if (!/^Bearer\s+\S+/i.test(auth)) return false;
   try {
-    const part = jwt.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-    const claims = JSON.parse(atob(part + "=".repeat((4 - (part.length % 4)) % 4)));
-    return claims.sub ? claims.role : null;
-  } catch { return null; }
+    const r = await fetch(`${Deno.env.get("SUPABASE_URL")}/auth/v1/user`, {
+      headers: { Authorization: auth, apikey: Deno.env.get("SUPABASE_ANON_KEY") ?? "" },
+    });
+    if (!r.ok) return false;
+    const user = await r.json();
+    return !!(user && user.id && user.role === "authenticated");
+  } catch { return false; }
 }
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return fail("bad_request", 405);
-  // the gateway has already checked the token's signature; only a signed-in user may spend API credit, never the public key
-  if (tokenRole(req) !== "authenticated") return fail("signed_out", 401);
+  if (!(await signedIn(req))) return fail("signed_out", 401);
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
   if (!apiKey) return fail("no_key");
 
