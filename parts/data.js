@@ -75,7 +75,7 @@ async function syncAll(){
   syncing=true;
   try{await push(); if(await pull()) requestRender()}catch(e){S.syncErr=(e&&e.message)||'Couldn’t reach the cloud'}
   syncing=false; setSync();
-  uploadPhotos(); importPhotos(); estimatePending(); coachCheck();
+  uploadPhotos(); estimatePending(); coachCheck();
 }
 function setSync(){
   const el=document.getElementById('sync'); if(!el) return;
@@ -163,25 +163,6 @@ async function uploadPhotos(){
 async function deletePhotos(ids){
   for(const id of ids){try{await photoDel(id)}catch(e){} if(photoURLs[id]){URL.revokeObjectURL(photoURLs[id]);delete photoURLs[id]}}
   if(sb&&S.user&&navigator.onLine){try{await sb.storage.from('photos').remove(ids.map(photoPath))}catch(e){}}
-}
-// one-time move of the old app's meal photos, which arrive in the photo_import table
-let importing=false;
-async function importPhotos(){
-  if(importing||!sb||!S.user||!navigator.onLine) return;
-  importing=true;
-  try{
-    const {data,error}=await sb.from('photo_import').select('id,b64');
-    if(!error&&data) for(const r of data){
-      const bin=atob(r.b64), u8=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);
-      const blob=new Blob([u8],{type:'image/jpeg'});
-      const {error:e}=await sb.storage.from('photos').upload(photoPath(r.id),blob,{contentType:'image/jpeg',upsert:true});
-      if(e) continue;
-      try{await photoPut(r.id,{blob,up:true})}catch(x){}
-      await sb.from('photo_import').delete().eq('id',r.id);
-    }
-    if(data&&data.length) requestRender();
-  }catch(e){}
-  importing=false;
 }
 
 /* ============ Claude ============ */
