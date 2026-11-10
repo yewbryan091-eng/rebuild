@@ -2346,6 +2346,7 @@ function renderPicker(){
         <label>Reps to<input class="inp num" type="number" inputmode="numeric" value="${cur.hi}" data-slot="hi"></label>
         <label>Rest (s)<input class="inp num" type="number" inputmode="numeric" step="15" value="${cur.rest}" data-slot="rest"></label></div>
         <div class="row" style="gap:6px"><button class="btn sm danger" data-act="rmslot">Remove from today</button></div>
+        ${lu.length>1?`<div class="label">Superset with</div><div class="chips">${lu.map((s,j)=>j===p.i?'':`<button class="chipb${cur.ss&&s.ss===cur.ss?' on':''}" data-act="sswith" data-j="${j}">${esc(exOf(s.ex).n)}</button>`).join('')}</div>`:''}
         <div class="small muted">Pick a replacement below. Sets, reps and rest stay the same.</div>`:''}
       <input class="inp" id="pq" type="search" placeholder="Search ${Object.keys(EX).length} exercises" value="${esc(p.q)}" autocomplete="off">
       <div class="chips">${order.map(g=>`<button class="chipb${p.g===g?' on':''}" data-act="pickg" data-g="${g}">${GROUPS[g]}</button>`).join('')}</div>
@@ -2601,6 +2602,11 @@ document.addEventListener('click',async ev=>{
       // adding keeps the list open so a whole custom workout can be built in one go
       else {lu.push(slotOf(id,exOf(id).sc)); toast(`Added ${exOf(id).n}`); const pl=document.getElementById('picklist'); if(pl) pl.innerHTML=pickList()}
       render(); break;}
+    // tapping a partner moves it right under this exercise and links them; tapping a linked one unlinks it
+    case 'sswith': {const d=editDay(k), lu=lineupFor(d,k), a=lu[S.pick.i], b=lu[+el.dataset.j];
+      if(a.ss&&b.ss===a.ss){delete b.ss; tidySS(lu); toast(`${exOf(b.ex).n} unlinked`)}
+      else {lu.splice(lu.indexOf(b),1); lu.splice(lu.indexOf(a)+1,0,b); const id=a.ss||uid().slice(0,6); a.ss=id; b.ss=id; tidySS(lu); toast(`Superset: ${exOf(a.ex).n} + ${exOf(b.ex).n}`)}
+      closeLayer(); render(); break;}
     case 'rmslot': {const d=editDay(k); const lu=lineupFor(d,k); const [gone]=lu.splice(S.pick.i,1); closeLayer(); render(); toast(`Removed ${exOf(gone.ex).n} from today`); break;}
     case 'order': openOrder(); break;
     case 'omv': {const d=editDay(k), lu=lineupFor(d,k), i=+el.dataset.i, j=i+(+el.dataset.d); if(j<0||j>=lu.length)break; lu.splice(j,0,lu.splice(i,1)[0]); tidySS(lu); renderOrderList(); render(); break;}

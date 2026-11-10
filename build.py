@@ -263,6 +263,8 @@ rep("document.addEventListener('visibilitychange',()=>{if(document.hidden)return
     "document.addEventListener('visibilitychange',()=>{if(document.hidden){lsSave();return} rollover(); if(rest.end)keepAwake(); syncAll()});")
 rep("init();\n</script>", "init();\nif('serviceWorker' in navigator) addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));\n</script>")
 
+exec((ROOT / 'parts/superset_patch.py').read_text())
+
 # nothing from the artifact runtime may survive
 for gone in ('claude.use', 'sample.', 'sampleLimits', 'assets.', '/_blob/', 'useCap', 'PLANS[planOf', 'plan=PLANS[pid]', 'PLANS[pid].col'):
     if gone in src:
