@@ -1,18 +1,18 @@
 /* ============ state + storage ============ */
 // Local-first: every change lands on this phone at once and waits in an outbox until it reaches the cloud.
-const S = {tab:'today',date:todayKey(),days:{},profile:{},scans:[],tpl:{},customs:{},weeks:{},mode:'loading',draft:null,editMeal:null,scanDraft:null,sheet:null,pick:null,logf:'all',dirty:new Set(),saving:0,user:null};
+const S = {tab:'today',date:todayKey(),days:{},profile:{},scans:[],tpl:{},customs:{},customEx:{},weeks:{},mode:'loading',draft:null,editMeal:null,scanDraft:null,sheet:null,pick:null,logf:'all',dirty:new Set(),saving:0,user:null};
 const SB_URL='https://hzutrayxpqzeaxwbuafi.supabase.co', SB_KEY='sb_publishable_Dg0tQQN7f3ZO6g-dDCsCSg_ML6I_RhW';
 const sb = window.supabase ? window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}}) : null;
 const LSK='rebuild:v2', OUTK='rebuild:outbox', PULLK='rebuild:pulled';
 function lsLoad(){try{return JSON.parse(localStorage.getItem(LSK))||null}catch(e){return null}}
-function lsSave(){try{localStorage.setItem(LSK,JSON.stringify({days:S.days,profile:S.profile,scans:S.scans,tpl:S.tpl,customs:S.customs,weeks:S.weeks}))}catch(e){toast('This phone is out of storage space.')}}
+function lsSave(){try{localStorage.setItem(LSK,JSON.stringify({days:S.days,profile:S.profile,scans:S.scans,tpl:S.tpl,customs:S.customs,customEx:S.customEx,weeks:S.weeks}))}catch(e){toast('This phone is out of storage space.')}}
 // callers change the doc right after editDay() returns, so the copy is written once the current tap has finished
 let lsPending=false;
 function lsSoon(){if(lsPending)return;lsPending=true;setTimeout(()=>{lsPending=false;lsSave()},0)}
 
 /* each cloud path maps onto one part of S */
 const splitPath=p=>{const i=p.indexOf('/');return [p.slice(0,i),p.slice(i+1)]};
-const BAGS={days:'days',templates:'tpl',customs:'customs',weeks:'weeks'};
+const BAGS={days:'days',templates:'tpl',customs:'customs',weeks:'weeks',exercises:'customEx'};
 function docGet(path){
   const [c,id]=splitPath(path);
   if(c==='profile') return S.profile;
@@ -66,7 +66,7 @@ async function pull(){
     if(data.length<500) break;
   }
   try{localStorage.setItem(PULLK,String(maxTs))}catch(e){}
-  if(changed){freezeOldPlans();lsSave()}
+  if(changed){applyCustomEx();freezeOldPlans();lsSave()}
   return changed;
 }
 let syncing=false;
@@ -87,6 +87,15 @@ function setSync(){
   else if(S.saving||n){c='sync busy';t='Syncing'}
   el.className=c; el.lastChild.textContent=t;
 }
+// exercises he typed in himself join the library, each as its own "movement" family
+function applyCustomEx(){
+  for(const [id,c] of Object.entries(S.customEx)){
+    if(EX[id]&&EX[id].mine){EX[id].n=c.n;EX[id].g=c.g;EX[id].m=GROUPS[c.g]||'';continue}
+    const fam=FAMS.length; FAMS.push([id]);
+    EX[id]={n:c.n,g:c.g,fam,m:GROUPS[c.g]||'',an:null,p:null,inc:2.5,sc:'i',bw:0,as:0,mine:1,
+      c:['Your own exercise: same setup every time, so the numbers compare week to week.','Control the lowering, full range, stop 1–2 reps before failure.'],x:'Ego weight or half reps.'};
+  }
+}
 const getDay = k=>S.days[k]||{date:k};
 function editDay(k){
   if(!S.days[k]) S.days[k]={date:k};
@@ -98,7 +107,8 @@ function saveProfile(){queueSave('profile/me')}
 
 async function init(){
   const local=lsLoad();
-  if(local){S.days=local.days||{};S.profile=local.profile||{};S.scans=local.scans||[];S.tpl=local.tpl||{};S.customs=local.customs||{};S.weeks=local.weeks||{}}
+  if(local){S.days=local.days||{};S.profile=local.profile||{};S.scans=local.scans||[];S.tpl=local.tpl||{};S.customs=local.customs||{};S.weeks=local.weeks||{};S.customEx=local.customEx||{}}
+  applyCustomEx();
   render();
   if(sb){
     // the saved session works with no signal; the token refreshes once the phone is back online

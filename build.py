@@ -265,6 +265,8 @@ rep("init();\n</script>", "init();\nif('serviceWorker' in navigator) addEventLis
 
 exec((ROOT / 'parts/superset_patch.py').read_text())
 
+exec((ROOT / 'parts/customex_patch.py').read_text())
+
 # nothing from the artifact runtime may survive
 for gone in ('claude.use', 'sample.', 'sampleLimits', 'assets.', '/_blob/', 'useCap', 'PLANS[planOf', 'plan=PLANS[pid]', 'PLANS[pid].col'):
     if gone in src:
