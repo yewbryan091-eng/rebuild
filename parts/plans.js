@@ -197,7 +197,7 @@ async function runCoach(mon,auto){
     const t=todayKey(), end=addDays(mon,6);
     const ok=p=>PLANS[p]&&p!=='rest'||(String(p).startsWith('c_')&&S.customs[String(p).slice(2)]);
     const sessions=(Array.isArray(r.sessions)?r.sessions:[]).filter(s=>s&&ok(s.plan)).slice(0,7)
-      .map(s=>({plan:s.plan,day:/^\d{4}-\d{2}-\d{2}$/.test(s.day||'')&&s.day>=mon&&s.day<=end&&s.day>=t?s.day:null,note:String(s.note||'').slice(0,140)}));
+      .map(s=>({plan:s.plan,day:/^\d{4}-\d{2}-\d{2}$/.test(s.day||'')&&s.day>=mon&&s.day<=end&&s.day>=t?s.day:null,note:String(s.note||'').slice(0,260)}));
     const lifts={}; if(r.lifts&&typeof r.lifts==='object') for(const [id,v] of Object.entries(r.lifts)) if(EX[id]) lifts[id]=String(v).slice(0,80);
     // keep the coach's numbers inside sane bounds before they drive the targets
     const within=(v,lo,hi)=>{const n=num(v);return n!=null&&n>=lo&&n<=hi?Math.round(n):null};
