@@ -267,8 +267,10 @@ exec((ROOT / 'parts/superset_patch.py').read_text())
 
 exec((ROOT / 'parts/customex_patch.py').read_text())
 
+exec((ROOT / 'parts/v6_patch.py').read_text())
+
 # nothing from the artifact runtime may survive
-for gone in ('claude.use', 'sample.', 'sampleLimits', 'assets.', '/_blob/', 'useCap', 'PLANS[planOf', 'plan=PLANS[pid]', 'PLANS[pid].col'):
+for gone in ('claude.use', 'sample.', 'sampleLimits', 'assets.', '/_blob/', 'useCap', 'PLANS[planOf', 'plan=PLANS[pid]', 'PLANS[pid].col', 'verdict(', 'coachLift'):
     if gone in src:
         line = next(l for l in src.splitlines() if gone in l)
         sys.exit(f'leftover {gone!r}: {line[:160]}')

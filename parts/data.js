@@ -1,18 +1,18 @@
 /* ============ state + storage ============ */
 // Local-first: every change lands on this phone at once and waits in an outbox until it reaches the cloud.
-const S = {tab:'today',date:todayKey(),days:{},profile:{},scans:[],tpl:{},customs:{},customEx:{},weeks:{},mode:'loading',draft:null,editMeal:null,scanDraft:null,sheet:null,pick:null,logf:'all',dirty:new Set(),saving:0,user:null};
+const S = {tab:'today',date:todayKey(),days:{},profile:{},scans:[],tpl:{},customs:{},customEx:{},equip:{},foods:{},weeks:{},mode:'loading',draft:null,editMeal:null,scanDraft:null,sheet:null,pick:null,logf:'all',dirty:new Set(),saving:0,user:null};
 const SB_URL='https://hzutrayxpqzeaxwbuafi.supabase.co', SB_KEY='sb_publishable_Dg0tQQN7f3ZO6g-dDCsCSg_ML6I_RhW';
 const sb = window.supabase ? window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}}) : null;
 const LSK='rebuild:v2', OUTK='rebuild:outbox', PULLK='rebuild:pulled';
 function lsLoad(){try{return JSON.parse(localStorage.getItem(LSK))||null}catch(e){return null}}
-function lsSave(){try{localStorage.setItem(LSK,JSON.stringify({days:S.days,profile:S.profile,scans:S.scans,tpl:S.tpl,customs:S.customs,customEx:S.customEx,weeks:S.weeks}))}catch(e){toast('This phone is out of storage space.')}}
+function lsSave(){try{localStorage.setItem(LSK,JSON.stringify({days:S.days,profile:S.profile,scans:S.scans,tpl:S.tpl,customs:S.customs,customEx:S.customEx,equip:S.equip,foods:S.foods,weeks:S.weeks}))}catch(e){toast('This phone is out of storage space.')}}
 // callers change the doc right after editDay() returns, so the copy is written once the current tap has finished
 let lsPending=false;
 function lsSoon(){if(lsPending)return;lsPending=true;setTimeout(()=>{lsPending=false;lsSave()},0)}
 
 /* each cloud path maps onto one part of S */
 const splitPath=p=>{const i=p.indexOf('/');return [p.slice(0,i),p.slice(i+1)]};
-const BAGS={days:'days',templates:'tpl',customs:'customs',weeks:'weeks',exercises:'customEx'};
+const BAGS={days:'days',templates:'tpl',customs:'customs',weeks:'weeks',exercises:'customEx',equip:'equip',foods:'foods'};
 function docGet(path){
   const [c,id]=splitPath(path);
   if(c==='profile') return S.profile;
@@ -107,7 +107,7 @@ function saveProfile(){queueSave('profile/me')}
 
 async function init(){
   const local=lsLoad();
-  if(local){S.days=local.days||{};S.profile=local.profile||{};S.scans=local.scans||[];S.tpl=local.tpl||{};S.customs=local.customs||{};S.weeks=local.weeks||{};S.customEx=local.customEx||{}}
+  if(local){S.days=local.days||{};S.profile=local.profile||{};S.scans=local.scans||[];S.tpl=local.tpl||{};S.customs=local.customs||{};S.weeks=local.weeks||{};S.customEx=local.customEx||{};S.equip=local.equip||{};S.foods=local.foods||{}}
   applyCustomEx();
   render();
   if(sb){
