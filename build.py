@@ -271,6 +271,11 @@ exec((ROOT / 'parts/v6_patch.py').read_text())
 
 exec((ROOT / 'parts/rank_patch.py').read_text())
 
+exec((ROOT / 'parts/adaptive_week_patch.py').read_text())
+exec((ROOT / 'parts/quick_swap_patch.py').read_text())
+exec((ROOT / 'parts/live_sets_patch.py').read_text())
+exec((ROOT / 'parts/session_replay_patch.py').read_text())
+
 # nothing from the artifact runtime may survive
 for gone in ('claude.use', 'sample.', 'sampleLimits', 'assets.', '/_blob/', 'useCap', 'PLANS[planOf', 'plan=PLANS[pid]', 'PLANS[pid].col', 'verdict(', 'coachLift'):
     if gone in src:

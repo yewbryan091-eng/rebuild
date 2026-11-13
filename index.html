@@ -405,6 +405,63 @@ details.equip summary{font-weight:700;cursor:pointer}
 .rank-recap-row b{text-align:right}
 [data-rank-exercise]{scroll-margin-top:80px}
 
+.aw-card h2{white-space:normal}
+.aw-card .btn,.aw-sheet .btn,.aw-sheet .iconbtn{min-height:44px}
+.aw-card .row:first-child,.aw-sheet .row{gap:8px}
+.aw-row{width:100%;display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 0;border:0;border-top:1px solid var(--line);background:none;color:var(--ink);text-align:left}
+button.aw-row{min-height:48px}
+.aw-row small,.aw-count small{display:block;color:var(--muted);font-size:13px}
+.aw-date{font-weight:700;font-size:13px}
+.aw-intro{margin:0}
+.aw-days{display:grid;grid-template-columns:repeat(auto-fit,minmax(60px,1fr));gap:6px}
+.aw-day{display:grid;gap:2px;place-items:center;min-height:53px;padding:5px 2px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-size:13px}
+.aw-day span{color:var(--muted)}
+.aw-day.on{background:var(--sunk);border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.aw-day:disabled,.aw-count .iconbtn:disabled{opacity:.45;cursor:default}
+.aw-count{display:grid;grid-template-columns:minmax(0,1fr) auto 24px auto;align-items:center;gap:8px;padding:9px 0;border-block:1px solid var(--line)}
+.aw-count>.num{text-align:center;font-size:20px}
+.aw-count .iconbtn{width:44px}
+.aw-review h3{margin:0 0 4px;font-size:15px}
+.aw-sheet .aw-review .aw-row:last-child{padding-bottom:0}
+@media(max-width:340px){.aw-days{grid-template-columns:repeat(auto-fit,minmax(52px,1fr))}.aw-count{gap:5px}}
+
+.swap-sheet .swap-eyebrow{margin-bottom:4px;color:var(--muted);font-size:12px;font-weight:700}
+.swap-sheet .swap-meta{margin:0}
+.swap-sheet .swap-filter{display:grid;gap:5px}
+.swap-sheet .swap-filter b{font-size:13px}
+.swap-sheet .swap-filter .chipb{min-height:36px}
+.swap-sheet .swap-filter .chipb[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.swap-choices{display:grid;gap:6px}
+.swap-choice{display:grid;gap:2px;min-height:62px;width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);text-align:left;overflow-wrap:anywhere}
+.swap-choice strong{font-weight:800}
+.swap-choice span{color:var(--muted);font-size:13px}
+.swap-choice .swap-choice-kit{font-weight:700}
+.swap-carried{padding:2px 0}
+.swap-sheet :focus-visible{outline:2px solid var(--c-blue);outline-offset:2px}
+
+.live-set{display:grid;gap:5px;margin:9px 0;padding:11px 12px;border:1px solid color-mix(in srgb,var(--line) 62%,#49997a);border-left:3px solid #49997a;border-radius:9px;background:color-mix(in srgb,var(--surface) 92%,#49997a)}
+.live-set-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--muted)}
+.live-set-main{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.live-set-action{font-weight:700;line-height:1.15}
+.live-set-main b{display:block;font-size:20px}
+.live-set-main .btn{min-height:40px}
+.live-set-history{border-top:1px solid var(--line);padding-top:5px;display:flex;gap:5px 13px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+
+.session-replay{border-top:3px solid #49997a}
+.replay-lift{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:9px}
+.replay-line{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.replay-result{flex:none;font-size:13px;font-weight:700;color:var(--muted)}
+.replay-up{color:var(--good)}
+.replay-meta{font-size:13px;color:var(--muted)}
+.replay-splits{display:grid;gap:4px}
+.replay-splits>div{display:grid;grid-template-columns:52px minmax(0,1fr);align-items:center;gap:6px;font-size:13px}
+.replay-splits>div>span{color:var(--muted)}
+.replay-splits>div>div{display:flex;flex-wrap:wrap;gap:4px}
+.replay-splits b{display:inline-grid;min-width:29px;min-height:24px;padding:0 3px;place-items:center;background:var(--sunk);border-radius:4px;font-variant-numeric:tabular-nums}
+.replay-splits>div:last-child b{background:#265746;color:#fff}
+.replay-lift>.btn{justify-self:start}
+.train-actions{display:flex;flex-wrap:wrap;gap:4px 12px}
+
 </style>
 </head><body>
 
@@ -1505,19 +1562,19 @@ const PV = c=>`--plate:${COL(c)};--on-plate:${ON(c)}`;
 
 /* ============ state + storage ============ */
 // Local-first: every change lands on this phone at once and waits in an outbox until it reaches the cloud.
-const S = {tab:'today',date:todayKey(),days:{},profile:{},scans:[],tpl:{},customs:{},customEx:{},equip:{},foods:{},weeks:{},mode:'loading',draft:null,editMeal:null,scanDraft:null,sheet:null,pick:null,logf:'all',dirty:new Set(),saving:0,user:null};
+const S = {tab:'today',date:todayKey(),days:{},profile:{},scans:[],tpl:{},customs:{},customEx:{},equip:{},foods:{},weeks:{},adaptiveWeeks:{},mode:'loading',draft:null,editMeal:null,scanDraft:null,sheet:null,pick:null,logf:'all',dirty:new Set(),saving:0,user:null};
 const SB_URL='https://hzutrayxpqzeaxwbuafi.supabase.co', SB_KEY='sb_publishable_Dg0tQQN7f3ZO6g-dDCsCSg_ML6I_RhW';
 const sb = window.supabase ? window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}}) : null;
 const LSK='rebuild:v2', OUTK='rebuild:outbox', PULLK='rebuild:pulled';
 function lsLoad(){try{return JSON.parse(localStorage.getItem(LSK))||null}catch(e){return null}}
-function lsSave(){try{localStorage.setItem(LSK,JSON.stringify({days:S.days,profile:S.profile,scans:S.scans,tpl:S.tpl,customs:S.customs,customEx:S.customEx,equip:S.equip,foods:S.foods,weeks:S.weeks}))}catch(e){toast('This phone is out of storage space.')}}
+function lsSave(){try{localStorage.setItem(LSK,JSON.stringify({days:S.days,profile:S.profile,scans:S.scans,tpl:S.tpl,customs:S.customs,customEx:S.customEx,equip:S.equip,foods:S.foods,weeks:S.weeks,adaptiveWeeks:S.adaptiveWeeks}))}catch(e){toast('This phone is out of storage space.')}}
 // callers change the doc right after editDay() returns, so the copy is written once the current tap has finished
 let lsPending=false;
 function lsSoon(){if(lsPending)return;lsPending=true;setTimeout(()=>{lsPending=false;lsSave()},0)}
 
 /* each cloud path maps onto one part of S */
 const splitPath=p=>{const i=p.indexOf('/');return [p.slice(0,i),p.slice(i+1)]};
-const BAGS={days:'days',templates:'tpl',customs:'customs',weeks:'weeks',exercises:'customEx',equip:'equip',foods:'foods'};
+const BAGS={days:'days',templates:'tpl',customs:'customs',weeks:'weeks',adaptiveWeeks:'adaptiveWeeks',exercises:'customEx',equip:'equip',foods:'foods'};
 function docGet(path){
   const [c,id]=splitPath(path);
   if(c==='profile') return S.profile;
@@ -1612,7 +1669,7 @@ function saveProfile(){queueSave('profile/me')}
 
 async function init(){
   const local=lsLoad();
-  if(local){S.days=local.days||{};S.profile=local.profile||{};S.scans=local.scans||[];S.tpl=local.tpl||{};S.customs=local.customs||{};S.weeks=local.weeks||{};S.customEx=local.customEx||{};S.equip=local.equip||{};S.foods=local.foods||{}}
+  if(local){S.days=local.days||{};S.profile=local.profile||{};S.scans=local.scans||[];S.tpl=local.tpl||{};S.customs=local.customs||{};S.weeks=local.weeks||{};S.adaptiveWeeks=local.adaptiveWeeks||{};S.customEx=local.customEx||{};S.equip=local.equip||{};S.foods=local.foods||{}}
   applyCustomEx();
   render();
   if(sb){
@@ -1744,10 +1801,10 @@ function effortOf(id){
   return {t:1,lo:1,hi:2,txt:'about 1–2 reps left'};
 }
 // one exercise in one past session, read the way a coach would
-function readSession(k,id){
+function readSession(k,id,context=null){
   const day=S.days[k], all=doneSets(day,id); if(!all.length) return null;
   const slot=(day.lineup||[]).find(s=>s.ex===id)||null, as=assistOf(id);
-  const sets=all.filter(s=>num(s.w)!=null);
+  const sets=all.filter(s=>!s.wu0&&num(s.w)!=null&&num(s.w)>=0&&(!context||liveSetContextMatches(s,context,!!slot?.ss)));
   let top=null; if(sets.length){const ws=sets.map(s=>num(s.w)); top=as?Math.min(...ws):Math.max(...ws)}
   const topSets=top==null?[]:sets.filter(s=>num(s.w)===top), back=top==null?[]:sets.filter(s=>num(s.w)!==top);
   const rirs=topSets.map(s=>num(s.rir)).filter(r=>r!=null&&r>=0&&r<=4);
@@ -1757,15 +1814,18 @@ function readSession(k,id){
     // reps that drop after a superset or a rushed rest say little about strength
     tired:!!(slot&&slot.ss)||all.some(s=>s.ss)||!!(slot&&rests.length&&rests.some(r=>r<(slot.rest||90)*0.7))};
 }
-function sessionsOf(id,before,n=4){const out=[];for(const k of Object.keys(S.days).filter(k=>k<before).sort().reverse()){const r=readSession(k,id);if(r)out.push(r);if(out.length>=n)break}return out}
+function sessionsOf(id,before,n=4,context=null){const out=[];for(const k of Object.keys(S.days).filter(k=>k<before).sort().reverse()){const r=readSession(k,id,context);if(r)out.push(r);if(out.length>=n)break}return out}
 // what to attempt next: load, reps, effort, and one plain reason
-function decide(id,sl,before){
+function decide(id,sl,before,context={...liveEquipmentContext(id),superset:[]}){
   const ex=exOf(id), inc=incOf(id), as=assistOf(id), eff=effortOf(id), lo=sl.lo, hi=sl.hi;
-  const hist=sessionsOf(id,before), last=hist[0], ref=hist.find(h=>h.top!=null);
+  const hist=sessionsOf(id,before,4,context), last=hist[0];
+  const changed=last?.all.some(s=>!s.wu0&&num(s.w)!=null&&num(s.w)>=0&&!liveSetContextMatches(s,context,!!last.slot?.ss));
+  const ref=changed?null:hist.find(h=>h.top!=null);
   const out=(w,kind,why,goal=null)=>({w,lo,hi,eff,kind,up:kind==='up',down:kind==='down',why,last,ref,goal,
     head:`${w!=null?`${as?'Assist ':''}${ex.bw&&w===0&&!as?'Bodyweight':fmtW(w)+' kg'} · `:''}${lo}–${hi} reps · finish with ${eff.txt}`});
   if(!last) return out(null,'new',`First time: pick a weight you could lift ${hi} times with ${eff.txt}.`);
   if(last.pain||ref?.pain) return out(null,'hold','You flagged pain or form breaking down. Choose a lighter setup or a different exercise if needed. Stop if it hurts.');
+  if(changed) return out(null,'unknown','This setup or set format changed. Log a set here to establish a new starting point.');
   if(!ref) return out(null,'unknown',`Last time the weight wasn't logged (${last.all.map(s=>s.r).join('/')} reps). Pick a weight for ${lo}–${hi} reps and log it this time.`);
   const w0=ref.top, reps=ref.topSets.map(s=>num(s.r)), need=Math.max(1,ref.planned||sl.sets);
   const note=ref!==last?' (latest session had no weights logged)':'';
@@ -1931,6 +1991,7 @@ function nextTargets(k){
     if(sl.skip) return `<div class="muted"><b>${esc(ex.n)}</b> · skipped</div>`;
     if(!doneSets(day,sl.ex).length) return `<div class="muted"><b>${esc(ex.n)}</b> · not logged</div>`;
     const v=decide(sl.ex,sl,next); return `<div class="${v.up?'up':v.down?'down':''}"><b>${esc(ex.n)}</b> · ${esc(v.head)}. ${esc(v.why)}</div>`}).join('')
+    +swapCarrySummary(day,lu)
     +(day.full?day.full.filter(f=>!lu.some(s=>s.ex===f.ex)).map(f=>`<div class="muted"><b>${esc(exOf(f.ex).n)}</b> · left out (short session)</div>`).join(''):'');
 }
 function setMenuRow(id,i,cur,prev){
@@ -1974,8 +2035,8 @@ function bestE1(exId,exceptKey,exceptIdx){
 }
 function dayProgress(k){
   const day=getDay(k), lu=lineupOf(k);
-  const total=lu.reduce((a,e)=>a+e.sets,0);
-  let done=0; lu.forEach(e=>{done+=Math.min(doneSets(day,e.ex).length,e.sets)});
+  const carried=swapCarriedSets(day,lu), total=lu.reduce((a,e)=>a+e.sets,0)+carried;
+  let done=carried; lu.forEach(e=>{done+=Math.min(doneSets(day,e.ex).length,e.sets)});
   return {done,total,cardio:!!(day.cardio&&day.cardio.done)};
 }
 function trained(k){const day=getDay(k);return !!day.finished||setsDone(day)>0||(planOf(k)==='rest'&&!!(day.cardio&&day.cardio.done))}
@@ -1987,7 +2048,7 @@ function summary(k){
   const prev=prevSession(k,pid), pv=prev?dayVolume(S.days[prev]):0, vol=dayVolume(day);
   let mins=day.finished?day.finished.dur:(day.started?Math.round((Date.now()-Date.parse(day.started))/60000):null);
   if(mins!=null&&(mins<1||mins>240)) mins=null;
-  return {done:setsDone(day),planned:lu.reduce((a,s)=>a+s.sets,0),vol,prev,pv,mins,prs:dayPRs(k)};
+  return {done:setsDone(day),planned:lu.reduce((a,s)=>a+s.sets,0)+swapCarriedSets(day,lu),vol,prev,pv,mins,prs:dayPRs(k)};
 }
 function mealTotals(day){const t={kcal:0,p:0,c:0,f:0};(day.meals||[]).forEach(m=>{t.kcal+=+m.kcal||0;t.p+=+m.p||0;t.c+=+m.c||0;t.f+=+m.f||0});return t}
 function latestWeight(){
@@ -2040,6 +2101,7 @@ function planOf(k){
   const d=getDay(k);
   if(d.plan) return d.plan;
   if(k<todayKey()) return hasWork(d)?SCHED[dowOf(k)]:'rest';
+  if(adaptiveWeekFor(mondayOf(k))&&adaptiveFixed(k)) return adaptiveFixedPlan(k);
   return nextUp(k);
 }
 // sessions of k's week still to do, in the coach's order
@@ -2055,11 +2117,16 @@ function rotNext(k){
   return last?ROT[(ROT.indexOf(planOf(last))+1)%ROT.length]:'push';
 }
 function nextUp(k){
+  const adaptive=adaptivePlanFor(k);
+  if(adaptive!==null) return adaptive;
   if(k>todayKey()){const wk=S.weeks[mondayOf(k)];const s=wk&&(wk.sessions||[]).find(s=>s.day===k);return s?s.plan:'rest'}
   return weekLeft(k)[0]||rotNext(k);
 }
-const weekTarget = mon=>{const wk=S.weeks[mon];return wk&&wk.sessions&&wk.sessions.length?wk.sessions.length:4};
-const coachNote = k=>{const wk=S.weeks[mondayOf(k)];if(!wk)return '';const pid=planOf(k);const s=(wk.sessions||[]).find(s=>s.day===k&&s.plan===pid)||(wk.sessions||[]).find(s=>s.plan===pid);return s&&s.note||''};
+const weekTarget = mon=>{const target=adaptiveTarget(mon);if(target!==null)return target;const wk=S.weeks[mon];return wk&&wk.sessions&&wk.sessions.length?wk.sessions.length:4};
+const coachNote = k=>{
+  const mon=mondayOf(k), adaptive=adaptiveWeekFor(mon), pid=planOf(k);
+  if(adaptive&&k>=adaptive.start) return adaptive.sessions.find(s=>s?.date===k&&s.plan===pid)?.note||'';
+  const wk=S.weeks[mon];if(!wk)return '';const s=(wk.sessions||[]).find(s=>s.day===k&&s.plan===pid)||(wk.sessions||[]).find(s=>s.plan===pid);return s&&s.note||''};
 const planGroups = k=>PLAN_GROUPS[planOf(k)]||[...new Set(lineupOf(k).map(s=>exOf(s.ex).g))];
 // days trained under the old weekday split keep the workout they were
 function freezeOldPlans(){
@@ -2076,7 +2143,7 @@ function openWorkouts(){
     <div class="grab"></div>
     <div class="row between"><h2 class="sheet-h">Choose workout</h2><button class="iconbtn" data-act="closebtn" aria-label="Close">✕</button></div>
     ${hasSets?'<div class="small muted">Sets you already ticked today stay logged.</div>':''}
-    ${nu?`<div class="label">Next up</div>${row(nu,planLabel(nu,k),PI(nu,k).col,S.weeks[mondayOf(k)]?' <span class="small muted">· coach plan</span>':'')}`:''}
+    ${nu?`<div class="label">Next up</div>${row(nu,planLabel(nu,k),PI(nu,k).col,adaptivePlanFor(k)!==null?' <span class="small muted">· adaptive week</span>':S.weeks[mondayOf(k)]?' <span class="small muted">· coach plan</span>':'')}`:''}
     <div class="label">Your split</div>
     ${PLAN_ORDER.map(p=>row(p,PLAN_LABEL[p],PLANS[p].col)).join('')}
     <div class="label">Your workouts</div>
@@ -2248,11 +2315,12 @@ function coachCard(mon){
   let h='';
   if(wk){
     const done=Object.keys(S.days).filter(x=>x>=mon&&x<=addDays(mon,6)&&hasWork(S.days[x])).sort().map(x=>planOf(x));
-    const rows=wk.sessions.map(s=>{const i=done.indexOf(s.plan);if(i>=0)done.splice(i,1);const pl=PI(s.plan);
+    const rows=adaptiveWeekFor(mon)?'':wk.sessions.map(s=>{const i=done.indexOf(s.plan);if(i>=0)done.splice(i,1);const pl=PI(s.plan);
       return `<div class="csess" style="${PV(pl.col)}"><span class="small muted">${s.day?`${DOW[dowOf(s.day)].slice(0,3)} ${nice(s.day)}`:'Any day'}</span><div><span class="pill">${esc(planLabel(s.plan))}</span>${s.note?`<div class="small muted" style="margin-top:3px">${esc(s.note)}</div>`:''}</div><span class="${i>=0?'up':'muted'}">${i>=0?'✓':''}</span></div>`}).join('');
     h=`<section class="card"><div class="row between"><h2>Coach</h2><span class="small muted">Week of ${nice(mon)}</span></div>
       ${wk.summary?`<div>${esc(wk.summary)}</div>`:''}
       ${(wk.wins||[]).length?`<div class="small up">${wk.wins.map(esc).join('<br>')}</div>`:''}
+      ${adaptiveWeekFor(mon)?'<div class="small muted">Your Adaptive week sets the workout days.</div>':''}
       ${wk.fix?`<div class="hint"><b>Fix this week:</b> ${esc(wk.fix)}</div>`:''}
       <div>${rows}</div>
       <div class="small muted num">${[wk.kcal?`${wk.kcal.toLocaleString()} kcal`:'',wk.protein?`${wk.protein} g protein`:'',wk.steps?`${wk.steps.toLocaleString()} steps`:''].filter(Boolean).join(' · ')}${wk.kcal||wk.protein?' a day':''}</div>
@@ -2343,6 +2411,85 @@ function rankFocusCard(date) {
       `<button class="btn sm" data-act="rankexercise" data-id="${esc(next.ex)}">Go to exercise</button>` :
       '<button class="btn sm" data-act="tab" data-v="rank">Choose focus</button>'}
   </section>`;
+}
+
+/* Compare actual logged work at the same load and in the same workout context. */
+function replayEquipment(id, set) {
+  const settings = equipOf(id);
+  const context = set.liftContext;
+  if (!context && (settings.gym || settings.setup || (settings.unit && settings.unit !== 'total'))) return null;
+  const {unit = 'total', gym = '', setup = ''} = context || {};
+  return JSON.stringify([unit, String(gym).trim().toLowerCase(), String(setup).trim().toLowerCase()]);
+}
+
+function replayWork(day, id) {
+  const slot = (day.lineup || []).find(item => item.ex === id);
+  const sets = doneSets(day, id);
+  if (!sets.length || sets.some(set => set.pain || set.ss || set.wu0 || set.liftContext?.superset?.length) || slot?.ss) return null;
+  const load = num(sets[0].w);
+  if (load == null || load < 0 || sets.some(set => num(set.w) !== load)) return null;
+  const equipment = replayEquipment(id, sets[0]);
+  if (equipment == null || sets.some(set => replayEquipment(id, set) !== equipment)) return null;
+  const unit = sets[0].liftContext?.unit || 'total';
+  if (unit === 'assist') return null;
+  return {load, sets, slot, equipment, unit, reps: sets.reduce((sum, set) => sum + num(set.r), 0)};
+}
+
+function replayMatch(current, previous) {
+  if (!previous || current.load !== previous.load || current.equipment !== previous.equipment ||
+      current.sets.length !== previous.sets.length) return null;
+  if (current.slot && previous.slot &&
+      (current.slot.lo !== previous.slot.lo || current.slot.hi !== previous.slot.hi)) return null;
+  let effortKnown = true, restKnown = true;
+  for (let i = 0; i < current.sets.length; i++) {
+    const now = current.sets[i], then = previous.sets[i];
+    const rirNow = num(now.rir), rirThen = num(then.rir);
+    if (rirNow == null || rirThen == null) effortKnown = false;
+    else if (Math.abs(rirNow - rirThen) > 1) return null;
+    const restNow = num(now.rest), restThen = num(then.rest);
+    if (i > 0 && !(restNow > 0 && restThen > 0)) restKnown = false;
+    if (restNow > 0 && restThen > 0 && Math.abs(restNow - restThen) > Math.max(30, restThen * .35)) return null;
+  }
+  return {effortKnown, restKnown};
+}
+
+function sessionReplay(date) {
+  const day = getDay(date);
+  if (!day.finished) return '';
+  const dates = Object.keys(S.days).filter(key => key < date && S.days[key].finished).sort().reverse();
+  const comparisons = [];
+  for (const id of exOrder(date)) {
+    // Added-weight and assistance records have their own interpretation in lift history.
+    if (exOf(id).bw || assistOf(id)) continue;
+    const current = replayWork(day, id);
+    if (!current) continue;
+    for (const key of dates) {
+      const previous = replayWork(S.days[key], id);
+      const match = replayMatch(current, previous);
+      if (!match) continue;
+      const delta = current.reps - previous.reps;
+      comparisons.push({id, date:key, current, previous, delta, ...match});
+      break;
+    }
+  }
+  if (!comparisons.length) return '';
+  comparisons.sort((a, b) => Number(b.effortKnown) - Number(a.effortKnown) || b.delta - a.delta);
+  const items = comparisons.slice(0, 3).map(item => {
+    const {id, current, previous, delta, effortKnown, restKnown} = item;
+    const label = delta > 0 ? `+${delta} rep${delta === 1 ? '' : 's'}` : delta < 0 ?
+      `${delta} rep${delta === -1 ? '' : 's'}` : 'Matched';
+    const pills = sets => sets.map(set => `<b>${num(set.r)}</b>`).join('');
+    return `<article class="replay-lift">
+      <div class="replay-line"><strong>${esc(exOf(id).n)}</strong><span class="replay-result${delta > 0 ? ' replay-up' : ''}">${label}</span></div>
+      <div class="replay-meta">${esc(fmtW(current.load))} ${esc(UNIT_LABEL[current.unit] || 'kg')} · ${current.sets.length} work sets${effortKnown ? ' · similar effort' : ' · effort partly unlogged'}${restKnown ? '' : ' · rest partly unlogged'}</div>
+      <div class="replay-splits">
+        <div><span>${esc(nice(item.date))}</span><div>${pills(previous.sets)}</div></div>
+        <div><span>${date === todayKey() ? 'Today' : esc(nice(date))}</span><div>${pills(current.sets)}</div></div>
+      </div>
+      <button class="btn sm ghost" data-act="lift" data-id="${esc(id)}">Lift history</button>
+    </article>`;
+  }).join('');
+  return `<section class="card session-replay"><h2>Session replay</h2>${items}</section>`;
 }
 
 function rankRecap(date) {
@@ -2470,6 +2617,509 @@ function rankJump(id) {
   section.querySelector('.head')?.focus({preventScroll:true});
 }
 
+/* The workout calendar has its own record so regenerating coach notes cannot move it. */
+function adaptiveWeekFor(mon) {
+  const plan = S.adaptiveWeeks[mon];
+  return plan?.version === 1 && typeof plan.start === 'string' && Array.isArray(plan.sessions) ? plan : null;
+}
+
+function adaptivePlanFor(date) {
+  const plan = adaptiveWeekFor(mondayOf(date));
+  if (!plan || date < plan.start) return null;
+  const entry = plan.sessions.find(session => session?.date === date);
+  return entry && adaptiveTemplateExists(entry.plan) ? entry.plan : 'rest';
+}
+
+function adaptiveTemplateExists(id) {
+  return typeof id === 'string' && (ROT.includes(id) || (id.startsWith('c_') && !!S.customs[id.slice(2)]));
+}
+
+const adaptiveDates = mon => Array.from({length:7}, (_, i) => addDays(mon, i));
+const adaptiveDayLabel = date => `${DOW[dowOf(date)].slice(0, 3)} ${nice(date)}`;
+
+function adaptiveFixed(date) {
+  const day = getDay(date);
+  return !!(day.plan || day.started || day.finished || day.cardio?.done ||
+    Object.values(day.warm || {}).some(Boolean) || Object.values(day.sets || {}).some(sets => sets.some(set => set?.d)));
+}
+
+function adaptiveFixedPlan(date) {
+  const day = getDay(date);
+  return day.plan || (day.lineup?.length ? 'custom' : setsDone(day) ? SCHED[dowOf(date)] : adaptivePlanFor(date) || 'rest');
+}
+
+function adaptiveTarget(mon) {
+  const saved = adaptiveWeekFor(mon);
+  if (!saved) return null;
+  return adaptiveDates(mon).filter(date => {
+    const day = getDay(date);
+    if (date < saved.start) return setsDone(day) > 0 || (day.finished && adaptiveFixedPlan(date) !== 'rest');
+    if (adaptiveFixed(date)) return adaptiveFixedPlan(date) !== 'rest';
+    return adaptivePlanFor(date) !== 'rest';
+  }).length;
+}
+
+function adaptiveCandidates(mon, today = todayKey()) {
+  return adaptiveDates(mon).filter(date => date >= today && !adaptiveFixed(date));
+}
+
+function adaptiveLoggedGroups(day) {
+  const counts = {};
+  for (const id of Object.keys(day.sets || {})) {
+    const group = EX[id]?.g;
+    const work = group ? doneSets(day, id).length : 0;
+    if (work) counts[group] = (counts[group] || 0) + work;
+  }
+  return counts;
+}
+
+function adaptiveTemplateGroups(lineup) {
+  const counts = {};
+  for (const slot of lineup) {
+    const group = EX[slot.ex]?.g;
+    const sets = num(slot.sets);
+    if (group && sets > 0 && !slot.skip) counts[group] = (counts[group] || 0) + sets;
+  }
+  return counts;
+}
+
+// Select among the days the user picked. Adjacent lifting days are allowed
+// when availability requires them, but spread training out when possible.
+function adaptiveChooseDates(available, count, fixed, start) {
+  let best = [], bestScore = -Infinity;
+  const search = (from, selected) => {
+    if (selected.length === count) {
+      const days = fixed.concat(selected).sort();
+      let score = 0;
+      for (let i = 1; i < days.length; i++) {
+        const gap = daysBetween(days[i - 1], days[i]);
+        score += gap === 1 ? -7 : Math.min(gap, 3);
+      }
+      // Tie-break toward using earlier dates, leaving later dates free for changes.
+      score -= selected.reduce((sum, date) => sum + daysBetween(start, date), 0) * 0.05;
+      if (score > bestScore) { best = selected; bestScore = score; }
+      return;
+    }
+    for (let i = from; i <= available.length - (count - selected.length); i++) {
+      search(i + 1, selected.concat(available[i]));
+    }
+  };
+  search(0, []);
+  return best;
+}
+
+function adaptiveDraftPlan(mon, available, count, today = todayKey()) {
+  const start = mon > today ? mon : today;
+  const days = adaptiveDates(mon);
+  const end = days[6];
+  const eligible = new Set(adaptiveCandidates(mon, today));
+  const selected = [...new Set(available)].filter(date => eligible.has(date)).sort();
+  const wanted = Math.max(0, Math.min(selected.length, Math.floor(Number(count) || 0)));
+  const fixed = days.filter(date => date >= start && adaptiveFixed(date) && adaptiveFixedPlan(date) !== 'rest');
+  const load = new Map();
+  const familiar = new Map();
+  const historyStart = addDays(start, -28);
+  for (const [date, day] of Object.entries(S.days)) {
+    if (date < historyStart || date > today || date > end) continue;
+    const groups = adaptiveLoggedGroups(day);
+    if (!Object.keys(groups).length) continue;
+    load.set(date, groups);
+    if (day.plan) familiar.set(day.plan, (familiar.get(day.plan) || 0) + 1);
+  }
+  for (const date of fixed) {
+    if (load.has(date) || getDay(date).finished) continue;
+    load.set(date, adaptiveTemplateGroups(getDay(date).lineup || tplOf(adaptiveFixedPlan(date))));
+  }
+  const custom = Object.keys(S.customs).map(id => 'c_' + id)
+    .filter(id => familiar.has(id)).sort((a,b) => familiar.get(b) - familiar.get(a) || a.localeCompare(b)).slice(0, 3);
+  const templates = ROT.concat(custom).map(id => ({id, groups:adaptiveTemplateGroups(tplOf(id))}))
+    .filter(template => Object.keys(template.groups).length);
+  const protectedDates = [...new Set(fixed.concat([...load.keys()].filter(date => date >= addDays(start, -2) && date < start)))];
+  const dates = adaptiveChooseDates(selected, wanted, protectedDates, start);
+  const priority = new Set(prioOf());
+  const used = new Set(fixed.map(adaptiveFixedPlan));
+  const sessions = [];
+  for (const date of dates) {
+    const previousWeek = {}, adjacent = {};
+    const since = addDays(date, -6);
+    const previousDay = addDays(date, -1), nextDay = addDays(date, 1);
+    for (const [other, groups] of load) {
+      for (const [group, sets] of Object.entries(groups)) {
+        if (other >= since && other < date) previousWeek[group] = (previousWeek[group] || 0) + sets;
+        if (other === previousDay || other === nextDay) adjacent[group] = (adjacent[group] || 0) + sets;
+      }
+    }
+    let best;
+    for (const template of templates) {
+      const reasons = [];
+      let score = Math.min(4, familiar.get(template.id) || 0) * 0.25 - (used.has(template.id) ? 2 : 0);
+      for (const [group, sets] of Object.entries(template.groups)) {
+        // These are planning weights for coverage, not prescriptions for weekly set volume.
+        const recent = previousWeek[group] || 0;
+        const goal = priority.has(group) ? 6 : 4;
+        const benefit = Math.min(sets, 4, Math.max(0, goal - recent)) * (priority.has(group) ? 1.6 : 1);
+        const overlap = adjacent[group] ? Math.min(sets, 4) * 2.4 : 0;
+        score += benefit - overlap;
+        if (benefit > 0 && !overlap) reasons.push({group, benefit, priority:priority.has(group)});
+      }
+      if (!best || score > best.score) best = {template, reasons, score};
+    }
+    if (!best) break;
+    const {template, reasons} = best;
+    const top = reasons.sort((a,b) => b.benefit - a.benefit).slice(0, 2);
+    const focus = top.filter(item => item.priority);
+    const note = focus.length
+      ? `Prioritises ${focus.map(item => GROUPS[item.group].toLowerCase()).join(' and ')}`
+      : top.length ? `Adds work for ${top.map(item => GROUPS[item.group].toLowerCase()).join(' and ')}`
+      : 'Fits your available days';
+    sessions.push({date, plan:template.id, note});
+    load.set(date, template.groups);
+    used.add(template.id);
+  }
+  return {version:1, start, available:selected, count:wanted, sessions, fixed};
+}
+
+function adaptiveDefaultCount(mon, available, today) {
+  const logged = Object.keys(S.days).filter(date => date >= addDays(today, -14) && date < today &&
+    setsDone(S.days[date]) > 0).length;
+  const fixed = adaptiveDates(mon).filter(date => adaptiveFixed(date) && adaptiveFixedPlan(date) !== 'rest' &&
+    (date >= today || setsDone(getDay(date)) > 0)).length;
+  return Math.min(available.length, Math.max(0, (Math.round(logged / 2) || 3) - fixed));
+}
+
+function adaptiveScheduleRows(sessions, buttons = false) {
+  return sessions.map(({date, plan, note}) => {
+    const contents = `<span class="aw-date">${esc(adaptiveDayLabel(date))}</span><span><b>${esc(planLabel(plan, date))}</b><small>${esc(note)}</small></span>`;
+    return buttons ? `<button class="aw-row" data-act="goto" data-k="${esc(date)}">${contents}<span aria-hidden="true">›</span></button>`
+      : `<div class="aw-row">${contents}</div>`;
+  }).join('');
+}
+
+function adaptiveWeekCard(mon) {
+  const today = todayKey();
+  const next = addDays(mondayOf(today), 7);
+  if (mon < mondayOf(today) || mon > next) return '';
+  const plan = adaptiveWeekFor(mon);
+  const sessions = (plan?.sessions || []).filter(item => item?.date >= today &&
+    !adaptiveFixed(item.date) && adaptiveTemplateExists(item.plan));
+  return `<section class="card aw-card"><div class="row between">
+    <h2>Adaptive week</h2><button class="btn sm" data-act="awopen" data-mon="${mon}">${plan ? 'Edit schedule' : 'Set availability'}</button></div>
+    ${sessions.length ? adaptiveScheduleRows(sessions, true)
+      : plan ? '<div class="small muted">No additional sessions planned. See your week below.</div>'
+      : '<div class="small muted">Pick the days you can train. Rebuild uses your recent sessions and muscle priorities to suggest what fits.</div>'}
+    ${plan ? '<div class="small muted">Workouts you’ve started or set manually stay in place.</div>' : ''}
+  </section>`;
+}
+
+function adaptiveOpen(mon) {
+  const today = todayKey();
+  if (mon !== mondayOf(today) && mon !== addDays(mondayOf(today), 7)) return;
+  const saved = adaptiveWeekFor(mon);
+  const dates = adaptiveCandidates(mon, today);
+  const available = saved ? dates.filter(date => saved.available?.includes(date)) : dates;
+  // Slots completed or manually pinned since applying the plan now count as fixed.
+  const plannedRemaining = saved?.sessions.filter(session => available.includes(session?.date)).length;
+  const count = saved ? Math.min(available.length, plannedRemaining) : adaptiveDefaultCount(mon, available, today);
+  S.awDraft = {mon, available, count, wanted:count, preview:null};
+  adaptiveSheet();
+  document.querySelector('#layer .aw-sheet h2')?.focus({preventScroll:true});
+}
+
+function adaptiveSheet(focus = '', notice = '') {
+  const draft = S.awDraft;
+  if (!draft) return;
+  const {mon, available, count, preview} = draft;
+  const today = todayKey();
+  const eligible = new Set(adaptiveCandidates(mon, today));
+  const upcoming = adaptiveDates(mon).filter(date => date >= today);
+  const locked = upcoming.filter(date => !eligible.has(date));
+  const protectedRows = locked.map(date => ({date, plan:adaptiveFixedPlan(date),
+    note:setsDone(getDay(date)) ? 'Already logged' : 'Already set'}));
+  const choiceRows = upcoming.map(date => {
+    const on = available.includes(date);
+    const fixed = !eligible.has(date);
+    return `<button type="button" class="aw-day${on ? ' on' : ''}" data-act="awday" data-k="${date}"
+      aria-label="${esc(DOW[dowOf(date)] + ' ' + nice(date) + (fixed ? ', already set' : ''))}"
+      aria-pressed="${on}"${fixed ? ' disabled' : ''}><b>${DOW[dowOf(date)].slice(0, 3)}</b>
+      <span>${esc(nice(date))}</span></button>`;
+  }).join('');
+  const priorities = prioOf().filter(group => GROUPS[group]).map(group => GROUPS[group].toLowerCase());
+  const priorityText = priorities.length ? ` Your priorities are ${priorities.join(', ')}.` : '';
+  document.getElementById('layer').innerHTML = `<div class="scrim" data-act="close"><div class="sheet aw-sheet" role="dialog" aria-modal="true" aria-label="Adapt your week">
+    <div class="grab"></div>
+    <div class="row between"><h2 class="sheet-h" tabindex="-1">Adapt your week</h2><button class="iconbtn" data-act="closebtn" aria-label="Close">✕</button></div>
+    <p class="small muted aw-intro">${eligible.size
+      ? `Choose the days that work for you and how many sessions to schedule.${esc(priorityText)}`
+      : 'The remaining days already have a workout or activity logged.'}</p>
+    <div class="aw-days" aria-label="Available training days">${choiceRows}</div>
+    <div class="aw-count"><div><b>Sessions to schedule</b><small>${available.length} available day${available.length === 1 ? '' : 's'}</small></div>
+      <button class="iconbtn" data-act="awcount" data-n="-1" aria-label="Fewer sessions"${count <= 0 ? ' disabled' : ''}>−</button>
+      <b class="num" aria-live="polite">${count}</b>
+      <button class="iconbtn" data-act="awcount" data-n="1" aria-label="More sessions"${count >= available.length ? ' disabled' : ''}>+</button>
+    </div>
+    ${protectedRows.length ? `<div class="aw-review"><h3>Stays in place</h3>${adaptiveScheduleRows(protectedRows)}</div>` : ''}
+    ${notice ? `<div class="small muted" role="status">${esc(notice)}</div>` : ''}
+    ${preview ? `<div class="aw-review" aria-live="polite"><h3>Proposed schedule</h3>
+      ${preview.sessions.length ? adaptiveScheduleRows(preview.sessions) : `<div class="small muted">${eligible.size ? 'Keep unbooked days open for rest.' : 'All existing days stay in place.'}</div>`}
+      </div><button class="btn pri" data-act="awapply">Use this schedule</button>`
+      : eligible.size ? '<button class="btn pri" data-act="awpreview">Preview schedule</button>' : ''}
+    ${adaptiveWeekFor(mon) ? '<button class="btn ghost" data-act="awreset">Use usual schedule</button>' : ''}
+  </div></div>`;
+  if (focus) {
+    const target = document.querySelector('#layer ' + focus);
+    if (target && !target.disabled) target.focus({preventScroll:true});
+    else document.querySelector('#layer [data-act="awpreview"]')?.focus({preventScroll:true});
+  }
+}
+
+function adaptiveUpdateDate(date) {
+  const draft = S.awDraft;
+  if (!draft || !adaptiveCandidates(draft.mon).includes(date)) return;
+  const available = draft.available.includes(date) ? draft.available.filter(day => day !== date) : draft.available.concat(date).sort();
+  draft.count = Math.min(draft.wanted, available.length);
+  draft.available = available;
+  draft.preview = null;
+  adaptiveSheet(`[data-act="awday"][data-k="${date}"]`);
+}
+
+function adaptiveUpdateCount(step) {
+  const draft = S.awDraft;
+  if (!draft || ![-1,1].includes(step)) return;
+  draft.count = Math.max(0, Math.min(draft.available.length, draft.count + step));
+  draft.wanted = draft.count;
+  draft.preview = null;
+  adaptiveSheet(`[data-act="awcount"][data-n="${step}"]`);
+}
+
+function adaptivePreview() {
+  const draft = S.awDraft;
+  if (!draft) return;
+  draft.preview = adaptiveDraftPlan(draft.mon, draft.available, draft.count);
+  draft.available = draft.preview.available;
+  draft.count = draft.preview.count;
+  adaptiveSheet('[data-act="awapply"]');
+}
+
+function adaptiveApply() {
+  const draft = S.awDraft;
+  if (!draft?.preview) return;
+  if (draft.mon < mondayOf(todayKey())) {
+    closeLayer();
+    toast('This week has ended. Open the current week to plan again.');
+    return;
+  }
+  const fresh = adaptiveDraftPlan(draft.mon, draft.available, draft.count);
+  if (JSON.stringify(draft.preview) !== JSON.stringify(fresh)) {
+    draft.preview = fresh;
+    draft.available = fresh.available;
+    draft.count = fresh.count;
+    adaptiveSheet('[data-act="awapply"]', 'Your log or calendar changed. Review the updated schedule.');
+    return;
+  }
+  const {fixed, ...calendar} = fresh;
+  S.adaptiveWeeks[draft.mon] = {...calendar, at:new Date().toISOString()};
+  queueSave('adaptiveWeeks/' + draft.mon);
+  closeLayer();
+  render();
+  toast('Schedule saved');
+}
+
+function adaptiveReset() {
+  const draft = S.awDraft;
+  if (!draft || !adaptiveWeekFor(draft.mon)) return;
+  if (draft.mon < mondayOf(todayKey())) { closeLayer(); return; }
+  delete S.adaptiveWeeks[draft.mon];
+  queueSave('adaptiveWeeks/' + draft.mon);
+  closeLayer();
+  render();
+  toast('Usual schedule restored');
+}
+
+/* Next-set targets use today's confirmed work. Equipment details travel with each new set. */
+function liveEquipmentContext(id){
+  const equipment=equipOf(id);
+  const legacyUnit=exOf(id).as?'assist':'total';
+  const unit=assistOf(id)?'assist':['side','each'].includes(equipment.unit)?equipment.unit:'total';
+  return {unit,legacyUnit,gym:String(equipment.gym||'').trim(),setup:String(equipment.setup||'').trim()};
+}
+
+function liveLiftContext(date,slotIndex){
+  return liveSlotContext(lineupOf(date),slotIndex);
+}
+
+function liveSlotContext(lineup,slotIndex){
+  const slot=lineup[slotIndex];
+  if(!slot)return null;
+  const group=slotLabels(lineup).grp[slotIndex];
+  const superset=group?group.filter(index=>!lineup[index].skip).map(index=>lineup[index].ex):[];
+  return {...liveEquipmentContext(slot.ex),superset:superset.length>1?superset:[]};
+}
+
+function liveEquipmentMatches(snapshot,current){
+  if(!current)return false;
+  const normalize=value=>String(value||'').trim().replace(/\s+/g,' ').toLowerCase();
+  if(!snapshot)return current.unit===current.legacyUnit&&!normalize(current.gym)&&!normalize(current.setup);
+  return snapshot.unit===current.unit&&normalize(snapshot.gym)===normalize(current.gym)&&
+    normalize(snapshot.setup)===normalize(current.setup);
+}
+
+function liveSetContextMatches(set,current,wasSuperset=false){
+  if(!liveEquipmentMatches(set.liftContext,current))return false;
+  const saved=set.liftContext?.superset;
+  if(!Array.isArray(saved))return !wasSuperset&&!set.ss&&!current.superset.length;
+  return saved.length===current.superset.length&&saved.every((id,index)=>id===current.superset[index]);
+}
+
+function liveRir(set){
+  const rir=num(set.rir);
+  return rir!=null&&Number.isInteger(rir)&&rir>=0&&rir<=4?rir:null;
+}
+
+function liveLoad(id,set,context){
+  if(set.wu0)return null;
+  const load=num(set.w);
+  if(load!=null)return load>=0?load:null;
+  return exOf(id).bw&&context.unit!=='assist'?0:null;
+}
+
+function liveLoadLabel(id,load,unit){
+  if(exOf(id).bw&&unit!=='assist'&&load===0)return 'Bodyweight';
+  return `${fmtW(load)} ${UNIT_LABEL[unit]||'kg'}`;
+}
+
+function liveSetLabel(id,set,context){
+  const load=liveLoad(id,set,context), rir=liveRir(set);
+  const effort=rir==null?'':` · ${rir===4?'4+':rir} left`;
+  const weight=load==null?'Weight unknown':liveLoadLabel(id,load,context.unit);
+  return `${weight} · ${num(set.r)} reps${effort}`;
+}
+
+function liveComparison(id,date,context,load,workIndex){
+  if(load==null)return null;
+  for(const session of sessionsOf(id,date,6)){
+    const matched=session.all.filter(set=>!set.pain&&liveSetContextMatches(set,context,!!session.slot?.ss));
+    const exact=matched[workIndex];
+    if(exact&&liveLoad(id,exact,context)===load)return exact;
+    const fallback=matched.find(set=>liveLoad(id,set,context)===load);
+    if(fallback)return fallback;
+  }
+  return null;
+}
+
+// One usual increment for an easier set. Large steps call for choosing an available setup manually.
+function liveEasierLoad(id,load,context){
+  const increment=incOf(id), assisted=context.unit==='assist';
+  if(!(increment>0))return null;
+  if(!assisted&&(load===0||increment>load*0.20))return null;
+  if(assisted&&increment>Math.max(5,load*0.25))return null;
+  const easier=Math.round((load+(assisted?increment:-increment))*1000)/1000;
+  return easier>=0?easier:null;
+}
+
+function liveSetAdvice(date,slot,slotIndex,day=getDay(date)){
+  if(date!==todayKey()||day.finished||slot.skip)return null;
+  const id=slot.ex, rows=(day.sets||{})[id]||[];
+  const pain=rows.some(set=>set?.pain);
+  let lastIndex=rows.length-1;
+  while(lastIndex>=0&&!(rows[lastIndex]?.d&&!isWU(rows[lastIndex])&&num(rows[lastIndex].r)>0))lastIndex--;
+  const count=Math.max(slot.sets,rows.length);
+  if((lastIndex<0&&!pain)||count<=lastIndex+1)return null;
+  let next=lastIndex+1;
+  while(next<count&&(isWU(rows[next])||rows[next]?.d))next++;
+  if(next>=count)return null;
+  const context=liveLiftContext(date,slotIndex);
+  if(!context)return null;
+
+  const last=rows[lastIndex]||{}, repCount=num(last.r), rir=liveRir(last);
+  const sameSetup=liveEquipmentMatches(last.liftContext,context);
+  const load=sameSetup?liveLoad(id,last,context):null;
+  const ref=liveComparison(id,date,context,load,doneSets(day,id).length-1);
+  const target=(title,reason,weight=null,reps=null)=>({
+    next,title,reason,weight,reps,unit:context.unit,
+    today:lastIndex>=0?liveSetLabel(id,last,last.liftContext||context):null,
+    previous:ref?liveSetLabel(id,ref,context):null
+  });
+
+  if(pain){
+    return target('Pain or form flagged','Pause here. Choose a movement you can do without pain or loss of form.');
+  }
+  if(!sameSetup)return target('Changed setup','Log a work set on this setup to get a fresh target.');
+  if(!liveSetContextMatches(last,context)){
+    return target('Changed set format','Log a set in the current format to get a fresh target.');
+  }
+  if(load==null)return target('Weight unknown','Log the load on a work set to get a target.');
+  if(rir==null)return target('How many reps did you have left?','Tap the last set number to log reps in reserve.');
+  const lo=Math.max(1,Math.round(slot.lo)), hi=Math.max(lo,Math.round(slot.hi)), effort=effortOf(id);
+  if(!Number.isFinite(lo)||!Number.isFinite(hi))return null;
+  const elapsed=num(last.rest), restTarget=num(slot.rest);
+  const superset=context.superset.length>1;
+  const shortRest=elapsed!=null&&restTarget>0&&elapsed<restTarget*.75;
+  if((rir<effort.lo||repCount<lo)&&shortRest){
+    const rest=mmss(restTarget);
+    return target('Take your full rest',superset?
+      `Rest ${rest} after the round. Then reassess how much work you can do at the planned effort.`:
+      `The last set followed a short break. Take ${rest} before reassessing the load.`);
+  }
+
+  if(rir<effort.lo||repCount<lo){
+    const fewer=repCount-Math.max(1,effort.lo-rir);
+    if(fewer>=lo){
+      return target('Keep the load, trim the reps',`You finished with ${rir} left. Stop the next set with ${effort.txt}.`,
+        load,Math.min(hi,fewer));
+    }
+    const easier=liveEasierLoad(id,load,context);
+    const reason=repCount<lo?`You logged ${repCount} reps. The target starts at ${lo}.`:
+      `You finished with ${rir} left. The target is ${effort.txt}.`;
+    if(easier==null)return target('Choose an easier setup',`${reason} Choose an available variation or load that leaves more reps in reserve.`);
+    return target(context.unit==='assist'?'Use a little more assistance':'Take one step down',
+      `${reason}${superset?' Take the full rest after the round.':''}`,easier,lo);
+  }
+  if(rir>effort.hi&&!superset&&repCount<hi){
+    return target('Keep the load, try one more rep',`You had ${rir===4?'4+':rir} left. Stop with ${effort.txt}.`,
+      load,Math.min(hi,repCount+1));
+  }
+  return target('Repeat this load',superset?
+    `Keep the same effort across the round. Finish with ${effort.txt}.`:
+    `Aim for ${effort.txt} again and log what you complete.`,load,Math.min(hi,repCount));
+}
+
+function liveSetCard(id,advice){
+  if(!advice)return '';
+  const {next,title,reason,weight,reps,unit,today,previous}=advice;
+  const actionable=weight!=null&&reps!=null;
+  return `<aside class="live-set" data-live-set aria-label="Next set coaching">
+    <div class="live-set-label">Next set · ${next+1}</div>
+    <div class="live-set-main">
+      <div><div class="live-set-action">${esc(title)}</div>${actionable?
+        `<b class="num">${esc(liveLoadLabel(id,weight,unit))} × ${reps}</b>`:''}</div>
+      ${actionable?`<button class="btn sm" data-act="liveapply" data-id="${esc(id)}" data-i="${next}">Use target</button>`:''}
+    </div>
+    <div class="small">${esc(reason)}</div>
+    ${today?`<div class="live-set-history"><span>Today · ${esc(today)}</span>${previous?`<span>Comparable · ${esc(previous)}</span>`:''}</div>`:''}
+  </aside>`;
+}
+
+function applyLiveSet(date,id,index){
+  const lineup=lineupOf(date), slotIndex=lineup.findIndex(slot=>slot.ex===id&&!slot.skip);
+  if(slotIndex<0)return;
+  const advice=liveSetAdvice(date,lineup[slotIndex],slotIndex);
+  if(!advice||advice.next!==index||advice.weight==null||advice.reps==null)return;
+  const day=editDay(date);
+  lineupFor(day,date);
+  day.sets||={};
+  const sets=day.sets[id]||=[];
+  const set=sets[index]||={};
+  if(set.d||isWU(set))return;
+  set.w=advice.weight;
+  set.r=advice.reps;
+  delete set.wu0;
+  set.targetContext=liveLiftContext(date,slotIndex);
+  render();
+  const input=document.getElementById(`r-${id}-${index}`);
+  input?.closest('.set')?.querySelector('.tick')?.focus({preventScroll:true});
+  toast('Target filled. Check the set after lifting.');
+}
+
 /* ============ rendering ============ */
 let pendingRender=false;
 const typing = ()=>{const a=document.activeElement;return a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&document.getElementById('view').contains(a)};
@@ -2511,11 +3161,14 @@ function viewToday(k){
     <h1>${esc(plan.n)}</h1><div class="sub">${esc(plan.m)}</div>
     <div class="meta">${isNext?'<span class="chip">Next up</span>':''}<span class="chip num">This week ${wkDone}/${weekTarget(mon)}</span>${lu.length?`<span class="chip num">${prog.done}/${prog.total} sets</span>`:''}${vol?`<span class="chip num">${vol.toLocaleString()} kg</span>`:''}${day.finished?'<span class="chip">Done ✓</span>':''}</div>
     <div class="motiv">${esc(motiv)}</div>
-    ${day.finished?'':'<button class="wbtn" data-act="workouts">Change workout ▾</button>'}
+    ${day.finished?'':`<div class="train-actions">
+      <button class="wbtn" data-act="workouts">Change workout ▾</button>
+      ${k>=todayKey()&&mon<=addDays(mondayOf(todayKey()),7)?`<button class="wbtn" data-act="awopen" data-mon="${mon}">Adjust week</button>`:''}
+    </div>`}
   </section>`;
   if(k===todayKey()&&!num(day.bw)&&!day.finished) h+=`<section class="card"><div class="row between"><h3>Morning weigh-in</h3><label class="field" style="width:120px;flex:none"><input id="bw-t" type="number" inputmode="decimal" step="0.1" placeholder="${esc(latestWeight()||'')}" data-day="bw" aria-label="Today’s weight in kg"><span>kg</span></label></div><div class="small muted">After the toilet, before food. 3 mornings a week is enough for your coach.</div></section>`;
   h+=rankFocusCard(k);
-  if(day.finished) return h+rankRecap(k)+doneCard(k)+cardioCard(k);
+  if(day.finished) return h+rankRecap(k)+sessionReplay(k)+doneCard(k)+cardioCard(k);
   // warm-up
   const warm=day.warm||{}; const wuDone=plan.wu.filter(w=>warm[w]).length;
   let ramp='';
@@ -2553,15 +3206,18 @@ function exCard(k,day,sl,i,L){
   const lab=L?L.lab[i]:String(i+1), grp=L?L.grp[i]:null;
   const id=sl.ex, ex=exOf(id), arr=(day.sets||{})[id]||[], eq=equipOf(id), unit=unitOf(id);
   if(sl.skip) return `<section class="card ex skipped"><div class="row between"><div style="min-width:0"><b>${esc(lab)} · ${esc(ex.n)}</b><div class="small muted">Skipped today. It won't count against your progress.</div></div><button class="btn sm" data-act="skipslot" data-i="${i}">Undo</button></div></section>`;
-  const n=Math.max(sl.sets,arr.length), dec=decide(id,sl,k), last=dec.last;
-  const lastTxt=last?fmtSets(id,last.all):'';
+  const n=Math.max(sl.sets,arr.length), dec=swapDecision(id,sl,k,typeof liveLiftContext==='function'?liveLiftContext(k,i):undefined), last=dec.last;
+  const lastTxt=last&&last.sets.length?fmtSets(id,last.sets):'';
+  const live=liveSetAdvice(k,sl,i,day);
+  const currentContext=liveLiftContext(k,i);
   let rows='', anyDone=false;
   for(let s=0;s<n;s++){
     const cur=arr[s]||{}, prev=s>0?arr[s-1]:null, key=`${id}|${s}`; if(cur.d) anyDone=true;
     // empty boxes show exactly what a tick will log: the previous set's weight, else today's target
-    const prevW=prev&&num(prev.w)!=null&&!isWU(prev)?num(prev.w):null;
-    const phW=cur.wu0?'?':prevW!=null?fmtW(prevW):dec.w!=null?fmtW(dec.w):'';
-    const g=dec.goal, phR=String(g?g[Math.min(s,g.length-1)]:sl.lo);
+    const prevW=prev?.d&&!isWU(prev)&&!prev.pain&&liveEquipmentMatches(prev.liftContext,currentContext)?liveLoad(id,prev,currentContext):null;
+    const liveRow=live?.next===s;
+    const phW=cur.wu0?'?':liveRow?'':prevW!=null?fmtW(prevW):dec.w!=null?fmtW(dec.w):'';
+    const g=dec.goal, phR=liveRow?'':String(g?g[Math.min(s,g.length-1)]:sl.lo);
     const tag=cur.rir!=null?`<small>@${cur.rir==='u'?'?':cur.rir==4?'4+':cur.rir}</small>`:cur.pain?'<small>⚠</small>':cur.wu0&&cur.d?'<small>?kg</small>':'';
     rows+=`<div class="set${cur.d?' done':''}${isWU(cur)?' wuset':''}"><button class="n nbtn" data-act="setmenu" data-k="${key}" aria-label="Set ${s+1} options">${isWU(cur)?'W':s+1}${tag}</button>
       <div class="field"><input id="w-${id}-${s}" type="number" inputmode="decimal" step="0.5" placeholder="${esc(phW)}" value="${esc(cur.w??'')}" data-set="${id}|${s}|w" aria-label="Set ${s+1} weight"><span>${esc(unit)}</span></div>
@@ -2575,8 +3231,10 @@ function exCard(k,day,sl,i,L){
   return `<section data-rank-exercise="${esc(id)}" class="card ex${grp?' ss':''}${grp&&grp[0]!==i?' sscont':''}">${ssTxt}
     <div class="exhead"><button class="head" data-act="form" data-kind="ex" data-id="${id}"><span class="thumbwrap">${figTag(ex.an,ex.p,'thumb')}<span class="exn num">${esc(lab)}</span></span><div style="min-width:0"><div class="title">${esc(ex.n)}</div>
       <div class="presc num">${sl.sets} × ${sl.lo}–${sl.hi} reps · rest ${mmss(sl.rest)}${note}${eq.setup?` · ${esc(eq.setup)}`:''}</div><div class="how">Form + cues ›</div></div></button>
-      <button class="swapbtn" data-act="slot" data-i="${i}" aria-label="Swap or edit ${esc(ex.n)}">⇄<span>Swap</span></button></div>
+      <button class="swapbtn" data-act="quickswap" data-i="${i}" aria-label="Swap or edit ${esc(ex.n)}">⇄<span>Swap</span></button></div>
+    ${swapCarryLabel(day,sl)}
     <div class="hint${dec.up?' up':''}${dec.down?' down':''}"><b class="num">${esc(dec.head)}</b><div>${esc(dec.why)}</div>${lastTxt?`<div class="muted num">Last (${nice(last.k)}): ${esc(lastTxt)}</div>`:''}</div>
+    ${liveSetCard(id,live)}
     <div class="sets">${rows}</div>
     <div class="setbtns"><button class="btn sm ghost" data-act="addset" data-id="${id}" data-i="${i}">+ Set</button>${n>1?`<button class="btn sm ghost" data-act="rmset" data-id="${id}" data-i="${i}">− Set</button>`:''}${anyDone?'':`<button class="btn sm ghost" data-act="skipslot" data-i="${i}" style="margin-left:auto">Skip</button>`}</div>
     ${i===0&&!anyDone?'<div class="small muted">✓ logs what’s in the boxes; empty boxes take the grey numbers. Tap a set number for reps left, same as last set, unknown weight, warm-up or pain.</div>':''}
@@ -2608,7 +3266,7 @@ function viewLog(k){
   const mon=mondayOf(k); let rows='', ses=0, vol=0, kc=0, pr=0, nd=0, kcA=0, prA=0, ndA=0;
   const tg=targets();
   for(let i=0;i<7;i++){
-    const kk=addDays(mon,i), pid=planOf(kk), plan=PI(pid,kk), p=dayProgress(kk), day=getDay(kk), mt=mealTotals(day), open=kk>todayKey()&&pid==='rest'&&!day.plan;
+    const kk=addDays(mon,i), pid=planOf(kk), plan=PI(pid,kk), p=dayProgress(kk), day=getDay(kk), mt=mealTotals(day), open=kk>todayKey()&&pid==='rest'&&!day.plan&&adaptivePlanFor(kk)===null;
     if(pid!=='rest'&&trained(kk)) ses++;
     vol+=dayVolume(day); if(mt.kcal){kcA+=mt.kcal;prA+=mt.p;ndA++;if(day.foodDone){kc+=mt.kcal;pr+=mt.p;nd++}}
     const st=open?'':day.finished?'Done ✓':pid==='rest'?(p.cardio?'Walk done':'—'):`${p.done}/${p.total} sets`;
@@ -2617,7 +3275,7 @@ function viewLog(k){
       <div>${open?'<span class="small muted">Not planned</span>':`<span class="pill">${esc(planLabel(pid,kk))}</span>`}${mt.kcal?`<div class="small muted num" style="margin-top:4px">${Math.round(mt.kcal)} kcal · ${Math.round(mt.p)} g protein${day.foodDone?'':' · partial'}</div>`:''}</div>
       <div class="st">${st}</div></button>`;
   }
-  let h=coachCard(mon)+coverageCard(mon===mondayOf(todayKey())?todayKey():addDays(mon,6))+`<section class="card"><div class="row between"><h2>Week of ${nice(mon)}</h2><div class="row" style="gap:4px"><button class="iconbtn" data-act="wkprev" aria-label="Previous week">‹</button><button class="iconbtn" data-act="wknext" aria-label="Next week">›</button></div></div>
+  let h=adaptiveWeekCard(mon)+coachCard(mon)+coverageCard(mon===mondayOf(todayKey())?todayKey():addDays(mon,6))+`<section class="card"><div class="row between"><h2>Week of ${nice(mon)}</h2><div class="row" style="gap:4px"><button class="iconbtn" data-act="wkprev" aria-label="Previous week">‹</button><button class="iconbtn" data-act="wknext" aria-label="Next week">›</button></div></div>
     <div class="stats">
       <div class="stat"><b>${ses}/${weekTarget(mon)}</b><span>Sessions</span></div>
       <div class="stat"><b>${vol>=10000?(Math.round(vol/100)/10)+'k':vol.toLocaleString()}</b><span>kg moved</span></div>
@@ -2821,6 +3479,291 @@ function openForm(kind,id){
   mountFigs(layer);
 }
 
+/* A short list of familiar alternatives for the equipment available today. */
+const SWAP_KITS = {
+  db:'Dumbbells', cable:'Cable', machine:'Machine', rack:'Barbell / rack', body:'Bodyweight',
+  bench:'Dumbbells + bench', smith:'Smith machine', bar:'Pull-up bar', band:'Band',
+  pad:'Dumbbell + preacher bench', cableBench:'Cable + bench', sliders:'Sliders', ball:'Stability ball',
+  plate:'Weight plate'
+};
+const SWAP_FILTERS = {
+  all:'Any', db:'Dumbbells', cable:'Cable', machine:'Machine', rack:'Barbell / rack',
+  body:'Bodyweight', band:'Band', sliders:'Sliders', ball:'Stability ball', plate:'Plate'
+};
+const SWAP_FILTER_FOR = {bench:'db',pad:'db',cableBench:'cable',smith:'machine',bar:'body'};
+// These groups deliberately keep different movement patterns apart, even within one muscle.
+const SWAP_MOVEMENTS = [
+  ['Flat press', {rack:'bench floor_press',bench:'db_bench neutral_db_bench',db:'db_floor_press',smith:'smith_bench',machine:'machine_press hammer_press converging_press',cable:'cable_press seated_cable_press',body:'pushup_ex incline_pushup'}],
+  ['Incline press', {rack:'incline_bb low_incline_bb',bench:'incline_db low_incline_db',smith:'incline_smith',machine:'incline_machine incline_hammer',cableBench:'incline_cable_press',body:'decline_pushup'}],
+  ['Decline press', {rack:'decline_bb',bench:'decline_db',smith:'decline_smith',machine:'decline_machine'}],
+  ['Chest fly', {bench:'db_fly incline_db_fly',cable:'cable_fly cable_crossover',machine:'pec_deck incline_pec_deck'}],
+  ['Chest dip', {bar:'chest_dip',machine:'assisted_dip machine_dip'}],
+  ['Overhead press', {rack:'ohp seated_bb_press',db:'standing_db_press',bench:'shoulder_press arnold',smith:'smith_press',machine:'machine_shoulder hammer_shoulder',body:'pike_pushup'}],
+  ['Lateral raise', {db:'lat_raise leaning_lat',bench:'seated_lat',cable:'cable_lat cable_lat_both',machine:'machine_lat'}],
+  ['Rear delt work', {db:'bent_rev_fly rear_delt_row',bench:'cs_rev_fly',cable:'face_pull cable_rev_fly',machine:'rev_pec_deck machine_rear_row',band:'band_pullapart'}],
+  ['Triceps extension', {db:'db_kickback',bench:'db_skull',cable:'pushdown bar_pushdown sa_pushdown cable_kickback',machine:'tri_press_machine'}],
+  ['Overhead triceps', {db:'oh_ext sa_oh_ext',bench:'seated_oh_ext',rack:'ez_oh_ext',cable:'rope_oh_ext sa_cable_oh',machine:'machine_oh_ext'}],
+  ['Close-grip press', {rack:'close_grip cg_floor',bench:'cg_db',smith:'cg_smith',body:'cg_pushup diamond',machine:'machine_tri_dip'}],
+  ['Vertical pull', {bar:'pullup neutral_pullup chinup',cable:'pulldown cg_pulldown neutral_pulldown',machine:'assisted_pullup machine_pulldown'}],
+  ['Straight-arm pull', {bench:'db_pullover',cable:'sa_pulldown rope_sapd',machine:'machine_pullover'}],
+  ['Horizontal row', {rack:'bb_row tbar',bench:'cs_row sa_db_row cs_wide_row',db:'db_bent_row',cable:'cable_row sa_cable_row',machine:'machine_row iso_row',smith:'smith_row'}],
+  ['Biceps curl', {rack:'bb_curl ez_curl',db:'db_curl db_curl_both',cable:'cable_curl sa_cable_curl bayesian',machine:'machine_curl machine_preacher',bench:'incline_curl concentration',pad:'preacher_db'}],
+  ['Neutral-grip curl', {db:'hammer xbody_hammer',bench:'seated_hammer incline_hammer_curl',cable:'rope_hammer sa_cable_hammer'}],
+  ['Squat / leg press', {rack:'squat front_squat',db:'goblet heel_goblet',machine:'hack pendulum belt_squat leg_press seated_press vsquat',smith:'smith_squat smith_front'}],
+  ['Single-leg squat', {rack:'bb_bss bb_rev_lunge',db:'split_squat rev_lunge',bench:'bss stepup',smith:'smith_bss smith_split',body:'bw_lunge'}],
+  ['Knee extension', {machine:'leg_ext sl_ext',body:'rev_nordic',band:'spanish'}],
+  ['Hamstring curl', {machine:'leg_curl lying_curl standing_curl',sliders:'slider_curl',ball:'ball_curl'}],
+  ['Hip hinge', {rack:'rdl deadlift trap_dl',db:'db_rdl kb_dl',cable:'cable_rdl pull_through',smith:'smith_rdl',machine:'backext'}],
+  ['Hip thrust', {rack:'hip_thrust glute_bridge',bench:'db_thrust',smith:'smith_thrust',machine:'machine_thrust',body:'sl_bridge'}],
+  ['Calf raise', {db:'calf sl_calf',smith:'smith_calf',machine:'standing_calf seated_calf lp_calf',body:'stair_calf'}],
+  ['Ab crunch', {cable:'cable_crunch standing_cable_crunch',machine:'machine_crunch',body:'crunch_ex reverse_crunch',plate:'weighted_crunch'}],
+  ['Leg raise', {bar:'hang_leg_raise hang_knee',machine:'captain',body:'lying_leg_raise'}],
+  ['Trunk brace', {body:'dead_bug bird_dog shoulder_tap',cable:'pallof'}]
+].map(([name, kits]) => ({
+  name, items:Object.entries(kits).flatMap(([kit, ids])=>ids.split(' ').map(id=>({id,kit})))
+}));
+const SWAP_CUSTOM = {
+  quads:[[/\b(?:leg press|squat)\b/i,'Squat / leg press']],
+  back:[[/\brow\b/i,'Horizontal row'],[/\b(?:pull[- ]?down|pull[- ]?up)\b/i,'Vertical pull']],
+  core:[[/\bcrunch\b/i,'Ab crunch']],
+  hams:[[/\b(?:leg curl|hamstring curl)\b/i,'Hamstring curl'],[/\b(?:rdl|deadlift)\b/i,'Hip hinge']],
+  calves:[[/\bcalf\b/i,'Calf raise']]
+};
+
+function swapMovement(id){
+  const ex=EX[id];
+  if(!ex) return null;
+  const direct=SWAP_MOVEMENTS.find(m=>m.items.some(item=>item.id===id));
+  if(direct) return direct;
+  if(ex.mine){
+    const match=(SWAP_CUSTOM[ex.g]||[]).find(([pattern])=>pattern.test(ex.n));
+    return match?SWAP_MOVEMENTS.find(m=>m.name===match[1]):null;
+  }
+  // A library family can span several patterns. Only infer a family when it points to one group.
+  const family=new Set(FAMS[ex.fam]||[]);
+  const candidates=SWAP_MOVEMENTS.filter(m=>m.items.some(item=>family.has(item.id)&&EX[item.id]?.g===ex.g));
+  return candidates.length===1?candidates[0]:null;
+}
+
+function swapRemaining(day, slot){
+  return Math.max(0, Math.floor(num(slot.sets)||0)-doneSets(day,slot.ex).length);
+}
+
+function swapRecorded(day, id){
+  return ((day.sets||{})[id]||[]).some(set=>set?.d||set?.pain||num(set?.w)!=null||num(set?.r)!=null);
+}
+
+function swapAvailable(day, lineup, id){
+  return !lineup.some(slot=>slot.ex===id)&&!(day.full||[]).some(slot=>slot.ex===id)&&!swapRecorded(day,id);
+}
+
+function swapPrescription(source,id,sets){
+  const slot=slotOf(id,exOf(id).sc);
+  slot.sets=sets;
+  if(source.ss) slot.ss=source.ss;
+  return slot;
+}
+
+function swapSetLabel(id,w){
+  if(exOf(id).bw&&w===0&&!assistOf(id)) return 'Bodyweight';
+  return `${fmtW(w)} ${unitOf(id)}`;
+}
+
+function swapDecision(id,slot,date,context){
+  const dec=decide(id,slot,date,context);
+  if(!slot.quickSwap||!dec.up||dec.ref?.top==null) return dec;
+  const w=dec.ref.top;
+  return {...dec,w,kind:'hold',up:false,goal:null,
+    head:`${swapSetLabel(id,w)} · ${slot.lo}–${slot.hi} reps · finish with ${dec.eff.txt}`,
+    why:'Start with the last load you used on this exercise.'};
+}
+
+function swapChoices(date,index){
+  const day=getDay(date), lineup=lineupOf(date), slot=lineup[index];
+  if(day.finished||!slot||slot.skip) return [];
+  const move=swapMovement(slot.ex), group=EX[slot.ex]?.g, sets=swapRemaining(day,slot);
+  if(!move||!sets) return [];
+  const sourceKit=move.items.find(item=>item.id===slot.ex)?.kit;
+  const seen=lastSeenMap();
+  return move.items
+    .filter(({id})=>EX[id]?.g===group&&swapAvailable(day,lineup,id))
+    .map(({id,kit})=>{
+      const next=swapPrescription(slot,id,sets);
+      const minutes=slotMinutes(next);
+      return {id,kit,next,minutes,seen:seen[id]||'',sameKit:kit===sourceKit};
+    })
+    .sort((a,b)=>Number(a.sameKit)-Number(b.sameKit)||
+      b.seen.localeCompare(a.seen)||a.minutes-b.minutes);
+}
+
+function swapFilter(choices,filter,fast){
+  return choices.filter(item=>(filter==='all'||filter===(SWAP_FILTER_FOR[item.kit]||item.kit))&&(!fast||item.minutes<=6));
+}
+
+function swapShortlist(choices, filtered){
+  if(filtered) return choices.slice(0,6);
+  // Lead with one choice per equipment type so a busy station doesn't fill the sheet.
+  const featured=[], rest=[], kits=new Set();
+  for(const item of choices){
+    const type=SWAP_FILTER_FOR[item.kit]||item.kit;
+    if(kits.has(type)) rest.push(item);
+    else {kits.add(type);featured.push(item)}
+  }
+  return featured.concat(rest).slice(0,4);
+}
+
+function swapPanel(date,index,filter='all',fast=false,focus=true){
+  const day=getDay(date), slot=lineupOf(date)[index];
+  if(day.finished||!slot||slot.skip) return;
+  const ex=exOf(slot.ex), move=swapMovement(slot.ex), left=swapRemaining(day,slot);
+  const logged=doneSets(day,slot.ex).length;
+  const available=swapChoices(date,index), choices=swapFilter(available,filter,fast);
+  const equipment=new Set(available.map(item=>SWAP_FILTER_FOR[item.kit]||item.kit));
+  S.swapPicker={date,index,source:slot.ex,filter,fast};
+  const options=swapShortlist(choices,filter!=='all'||fast).map(item=>{
+    const context=typeof liveLiftContext==='function'?
+      {...liveEquipmentContext(item.id),superset:(liveLiftContext(date,index).superset||[]).map(id=>id===slot.ex?item.id:id)}:undefined;
+    const dec=swapDecision(item.id,{...item.next,quickSwap:true},date,context), e=exOf(item.id), gym=equipOf(item.id).gym;
+    const load=dec.w!=null?swapSetLabel(item.id,dec.w):dec.last?.pain||dec.ref?.pain?'Choose a comfortable setup':
+      exOf(item.id).bw&&!assistOf(item.id)?'Start with bodyweight':'Find a starting load with a light set';
+    return `<button class="swap-choice" data-act="swapapply" data-id="${esc(item.id)}">
+      <strong>${esc(e.n)}</strong><span class="swap-choice-kit">${esc(SWAP_KITS[item.kit])}${gym?` · ${esc(gym)}`:''}</span>
+      <span>${esc(load)} · ${left} × ${item.next.lo}–${item.next.hi} · ~${item.minutes} min</span>
+    </button>`;
+  }).join('');
+  const history=slot.quickSwap?.credit||[];
+  const carry=[...new Set(history.concat(logged?[slot.ex]:[]))].reduce((n,id)=>n+doneSets(day,id).length,0);
+  const description=left
+    ? `${left} work set${left===1?'':'s'} left${move?` · ${move.name}`:''}${GROUPS[ex.g]?` · ${GROUPS[ex.g]}`:''}`
+    : 'You’ve logged all the work sets for this exercise.';
+  const undo=slot.quickSwap?.previous&&!swapRecorded(day,slot.ex);
+  document.getElementById('layer').innerHTML=`<div class="scrim" data-act="close"><div class="sheet swap-sheet" role="dialog" aria-modal="true" aria-labelledby="swap-sheet-title">
+    <div class="grab"></div>
+    <div class="row between"><div><div class="swap-eyebrow">Equipment taken?</div><h2 class="sheet-h" id="swap-sheet-title" tabindex="-1">Swap ${esc(ex.n)}</h2></div><button class="iconbtn" data-act="closebtn" aria-label="Close">✕</button></div>
+    <p class="small muted swap-meta">${esc(description)}${carry?` · ${carry} logged set${carry===1?'':'s'} kept`:''}</p>
+    ${equipment.size?`<div class="swap-filter"><b>What’s free?</b><div class="chips">
+      ${Object.entries(SWAP_FILTERS).filter(([key])=>key==='all'||equipment.has(key)).map(([key,name])=>`<button class="chipb" data-act="swapfilter" data-e="${key}" aria-pressed="${key===filter}">${name}</button>`).join('')}
+      <button class="chipb" data-act="swapfast" aria-pressed="${fast}">6 min or less</button></div></div>`:''}
+    ${options?`<div class="swap-choices">${options}</div>`:left?`<p class="small muted swap-meta">${equipment.size?'No matches with those filters. Try another setup.':'Browse all exercises to choose a replacement for this movement.'}</p>`:''}
+    ${undo?'<button class="btn" data-act="swapundo">Undo last swap</button>':''}
+    <button class="btn ghost" data-act="swapbrowse">Browse all &amp; edit</button>
+  </div></div>`;
+  if(focus) document.getElementById('swap-sheet-title')?.focus({preventScroll:true});
+}
+
+function swapPickerContext(){
+  const p=S.swapPicker;
+  const day=getDay(S.date), lineup=lineupOf(S.date);
+  if(!p||p.date!==S.date||day.finished||lineup[p.index]?.ex!==p.source) return null;
+  return {p,day,lineup};
+}
+
+function swapReplaceSlot(day,lineup,index,next){
+  const current=lineup[index];
+  const credit=[...(current.quickSwap?.credit||[])];
+  if(doneSets(day,current.ex).length) credit.push(current.ex);
+  const original=current.quickSwap?.original||current;
+  const {quickSwap,...previous}=current;
+  if(quickSwap) previous.quickSwap={original:clone(original),credit:[...quickSwap.credit]};
+  const replacement={...next,quickSwap:{original:clone(original),credit:[...new Set(credit)],previous:clone(previous)}};
+  swapPutSlot(day,lineup,index,replacement);
+}
+
+function swapPutSlot(day,lineup,index,replacement){
+  const previous=lineup[index];
+  lineup[index]=replacement;
+  if(day.full){
+    const fullIndex=day.full.findIndex(slot=>slot.ex===previous.ex);
+    if(fullIndex!==-1) day.full[fullIndex]=clone(replacement);
+  }
+  const before=exOf(previous.ex).n;
+  if(rest.end&&(rest.name===before||rest.name.startsWith(before+' ('))){
+    rest.name=exOf(replacement.ex).n+rest.name.slice(before.length);
+  }
+}
+
+function applyQuickSwap(id){
+  const context=swapPickerContext();
+  if(!context) return;
+  const {p}=context;
+  const candidate=swapFilter(swapChoices(p.date,p.index),p.filter,p.fast).find(item=>item.id===id);
+  if(!candidate){swapPanel(p.date,p.index,p.filter,p.fast);return}
+  const day=editDay(p.date), lineup=lineupFor(day,p.date);
+  swapReplaceSlot(day,lineup,p.index,candidate.next);
+  closeLayer(); render(); rankJump(id);
+  toast(`${exOf(id).n} · ${candidate.next.sets} work set${candidate.next.sets===1?'':'s'} left`);
+}
+
+function undoQuickSwap(){
+  const context=swapPickerContext();
+  if(!context) return;
+  const {p,day,lineup}=context, current=lineup[p.index], previous=current.quickSwap?.previous;
+  if(!previous||swapRecorded(day,current.ex)) return;
+  if(lineup.some((slot,i)=>i!==p.index&&slot.ex===previous.ex)||
+     (day.full||[]).some(slot=>slot.ex===previous.ex)){
+    toast('That exercise is already in this workout.'); return;
+  }
+  const saved=editDay(p.date);
+  swapPutSlot(saved,lineupFor(saved,p.date),p.index,clone(previous));
+  closeLayer(); render(); rankJump(previous.ex);
+  toast(`Restored ${exOf(previous.ex).n}`);
+}
+
+// Temporary substitutions stay with the day. Strip them when saving a reusable workout.
+function swapReusableLineup(lineup){
+  const regular=new Set(lineup.filter(slot=>!slot.quickSwap).map(slot=>slot.ex));
+  const result=[];
+  for(const slot of lineup){
+    if(!slot.quickSwap){result.push(clone(slot));continue}
+    const original=slot.quickSwap.original;
+    if(!original||regular.has(original.ex)) continue;
+    const restored={...clone(original)};
+    if(slot.ss) restored.ss=slot.ss; else delete restored.ss;
+    regular.add(restored.ex);
+    result.push(restored);
+  }
+  return result;
+}
+
+function swapCarriedSets(day,lineup){
+  const current=new Set(lineup.map(slot=>slot.ex));
+  const older=new Set([...lineup,...(day.full||[])].flatMap(slot=>slot.quickSwap?.credit||[]));
+  return [...older].reduce((n,id)=>n+(current.has(id)?0:doneSets(day,id).length),0);
+}
+
+function swapCarrySummary(day,lineup){
+  const current=new Set(lineup.map(slot=>slot.ex));
+  const ids=new Set([...lineup,...(day.full||[])].flatMap(slot=>slot.quickSwap?.credit||[]));
+  return [...ids].filter(id=>!current.has(id)&&doneSets(day,id).length)
+    .map(id=>`<div class="muted"><b>${esc(exOf(id).n)}</b> · ${doneSets(day,id).length} work sets logged before swapping</div>`).join('');
+}
+
+function swapCarryLabel(day,slot){
+  const ids=slot.quickSwap?.credit||[];
+  const lines=ids.map(id=>({id,count:doneSets(day,id).length})).filter(item=>item.count);
+  if(!lines.length) return '';
+  return `<div class="small muted swap-carried">${lines.map(({id,count})=>`${count} set${count===1?'':'s'} logged on ${esc(exOf(id).n)}`).join(' · ')}</div>`;
+}
+
+function swapFullPickerChoice(id){
+  const picker=S.pick, date=S.date, day=getDay(date), lineup=lineupOf(date);
+  if(!picker||day.finished||lineup.some(slot=>slot.ex===id)||(day.full||[]).some(slot=>slot.ex===id)) return;
+  if(picker.mode==='swap'){
+    const current=lineup[picker.i], sets=current&&swapRemaining(day,current);
+    if(!sets||!swapAvailable(day,lineup,id)){toast('Choose an exercise you haven’t logged today.');return}
+    const saved=editDay(date), next=swapPrescription(current,id,sets);
+    swapReplaceSlot(saved,lineupFor(saved,date),picker.i,next);
+    closeLayer(); render(); rankJump(id); toast(`Swapped to ${exOf(id).n}`);
+  }else{
+    const saved=editDay(date);
+    lineupFor(saved,date).push(slotOf(id,exOf(id).sc));
+    toast(`Added ${exOf(id).n}`);
+    const list=document.getElementById('picklist');
+    if(list) list.innerHTML=pickList();
+    render();
+  }
+}
+
 /* ============ swap / add picker ============ */
 function lastSeenMap(){const m={};for(const k of Object.keys(S.days).sort()){const d=S.days[k];for(const id in (d.sets||{}))if(doneSets(d,id).length)m[id]=k}return m}
 function openPicker(mode,i){
@@ -2854,7 +3797,7 @@ function renderPicker(){
         <div class="row" style="gap:6px"><button class="btn sm danger" data-act="rmslot">Remove from today</button></div>
         ${lu.length>1?`<div class="label">Superset with</div><div class="chips">${lu.map((s,j)=>j===p.i?'':`<button class="chipb${cur.ss&&s.ss===cur.ss?' on':''}" data-act="sswith" data-j="${j}">${esc(exOf(s.ex).n)}</button>`).join('')}</div>`:''}
         ${equipBox(cur.ex)}
-        <div class="small muted">Pick a replacement below. Sets, reps and rest stay the same. A different machine is a different exercise: add it as your own so its numbers stay separate.</div>`:''}
+        <div class="small muted">Swaps are for today. The replacement takes over the remaining sets, using its own reps, rest and history. Add a different machine as a custom exercise to track its loads separately.</div>`:''}
       <input class="inp" id="pq" type="search" placeholder="Search ${Object.keys(EX).length} exercises" value="${esc(p.q)}" autocomplete="off">
       <div class="chips">${order.map(g=>`<button class="chipb${p.g===g?' on':''}" data-act="pickg" data-g="${g}">${GROUPS[g]}</button>`).join('')}</div>
     </div>
@@ -2862,8 +3805,11 @@ function renderPicker(){
   </div></div>`;
 }
 function pickList(){
-  const p=S.pick, lu=lineupOf(S.date), inToday=new Set(lu.map(s=>s.ex)), cur=p.mode==='swap'?exOf(lu[p.i].ex):null;
-  const row=id=>{const e=EX[id], ls=p.seen[id];return `<button class="pk" data-act="pickex" data-id="${id}"${inToday.has(id)?' disabled':''}><div class="pn">${esc(e.n)}${inToday.has(id)?' <span class="muted small">· in today</span>':''}</div><div class="pm">${esc(e.m)}${ls?` · last ${nice(ls)}`:''}</div></button>`};
+  const p=S.pick, date=S.date, day=getDay(date), lu=lineupOf(date), cur=p.mode==='swap'?exOf(lu[p.i].ex):null;
+  const inToday=new Set([...lu,...(day.full||[])].map(slot=>slot.ex));
+  if(cur&&!swapRemaining(day,lu[p.i])) return '<div class="small muted">All work sets logged. You can still edit this exercise above.</div>';
+  const row=id=>{const e=EX[id], ls=p.seen[id], reason=inToday.has(id)?'in today':cur&&swapRecorded(day,id)?'already logged today':'';
+    return `<button class="pk" data-act="pickex" data-id="${esc(id)}"${reason?' disabled':''}><div class="pn">${esc(e.n)}${reason?` <span class="muted small">· ${reason}</span>`:''}</div><div class="pm">${esc(e.m)}${ls?` · last ${nice(ls)}`:''}</div></button>`};
   const q=p.q.trim().toLowerCase();
   if(q){
     const toks=q.split(/\s+/); const groups=planGroups(S.date);
@@ -2919,7 +3865,7 @@ document.addEventListener('pointerup',endDrag); document.addEventListener('point
 function openFinish(){
   const k=S.date, pid=planOf(k), plan=PI(pid,k), day=getDay(k), lu=lineupOf(k), sm=summary(k), nk=nextPlanDate(k,pid);
   // a short session never shrinks the saved workout: compare and save the full lineup
-  const changed=JSON.stringify(day.full||lu)!==JSON.stringify(tplOf(pid));
+  const changed=JSON.stringify(swapReusableLineup(day.full||lu))!==JSON.stringify(tplOf(pid));
   const diff=sm.pv?Math.round((sm.vol-sm.pv)/sm.pv*100):null;
   const tg=nextTargets(k);
   document.getElementById('layer').innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true" aria-label="Finish session">
@@ -2979,7 +3925,7 @@ function openLift(id){
     <div class="tablebox"><table><tr><th>Date</th><th>Sets</th><th>${ex.bw||ex.as?'Best':'Est. 1RM'}</th></tr>${hs.slice().reverse().slice(0,20).map(x=>`<tr><td>${nice(x.k)}</td><td>${fmtSets(id,x.ds,', ')}</td><td>${x.sc.e1?fmtW(x.sc.e1)+' kg':esc(x.sc.label)}</td></tr>`).join('')}</table></div>
   </div></div>`;
 }
-function closeLayer(){document.getElementById('layer').innerHTML='';S.pick=null}
+function closeLayer(){document.getElementById('layer').innerHTML='';S.pick=null;S.awDraft=null;S.swapPicker=null}
 function lightbox(src){
   document.getElementById('layer').innerHTML=`<div class="scrim" data-act="close"><div class="sheet lightbox"><div class="row between"><span class="label">Meal photo</span><button class="iconbtn" data-act="closebtn" aria-label="Close">✕</button></div><img src="${esc(src)}" alt="Meal photo"></div></div>`;
 }
@@ -3086,6 +4032,7 @@ document.addEventListener('click',async ev=>{
   if(act==='close'){if(ev.target===el)closeLayer();return}
   switch(act){
     case 'closebtn': closeLayer(); break;
+    case 'liveapply': applyLiveSet(k,el.dataset.id,+el.dataset.i); break;
     case 'rankgroup': {
       S.rankGroup=el.dataset.g; render();
       document.querySelector('.rank-pick[aria-pressed="true"]')?.focus({preventScroll:true});
@@ -3108,6 +4055,12 @@ document.addEventListener('click',async ev=>{
       break;
     case 'rankexercise': rankJump(el.dataset.id); break;
     case 'tab': S.tab=el.dataset.v; render(); window.scrollTo(0,0); break;
+    case 'awopen': adaptiveOpen(el.dataset.mon); break;
+    case 'awday': adaptiveUpdateDate(el.dataset.k); break;
+    case 'awcount': adaptiveUpdateCount(Number(el.dataset.n)); break;
+    case 'awpreview': adaptivePreview(); break;
+    case 'awapply': adaptiveApply(); break;
+    case 'awreset': adaptiveReset(); break;
     case 'prev': S.date=addDays(k,-1); render(); break;
     case 'next': S.date=addDays(k,1); render(); break;
     case 'today': S.date=todayKey(); render(); break;
@@ -3118,19 +4071,36 @@ document.addEventListener('click',async ev=>{
     case 'playpause': {const svg=document.querySelector('#layer svg[data-anim]'); if(!svg)break;
       if(REDUCE.matches){svg.dataset.play=svg.dataset.play?'':'1'; if(!svg.dataset.play)delete svg.dataset.play; el.textContent=svg.dataset.play?'Pause':'Play'}
       else{ if(svg.dataset.paused){delete svg.dataset.paused;el.textContent='Pause'}else{svg.dataset.paused='1';el.textContent='Play'} } break;}
-    case 'warm': {const d=editDay(k); d.warm=d.warm||{}; d.warm[el.dataset.id]=!d.warm[el.dataset.id]; render(); break;}
+    case 'warm': {const d=editDay(k); if(adaptivePlanFor(k)!==null&&!d.plan)d.plan=planOf(k); d.warm=d.warm||{}; d.warm[el.dataset.id]=!d.warm[el.dataset.id]; render(); break;}
     case 'cardio': {const d=editDay(k); d.cardio=d.cardio||{}; d.cardio.done=!d.cardio.done; if(d.cardio.done&&!d.cardio.min)d.cardio.min=planAt(k).cardio.min; render(); break;}
     case 'addset': {const d=editDay(k); const sl=lineupFor(d,k)[+el.dataset.i]; d.sets=d.sets||{}; const arr=d.sets[sl.ex]=d.sets[sl.ex]||[]; const n=Math.max(sl.sets,arr.length); sl.sets=n+1; render(); break;}
     case 'rmset': {const d=editDay(k); const sl=lineupFor(d,k)[+el.dataset.i]; d.sets=d.sets||{}; const arr=d.sets[sl.ex]=d.sets[sl.ex]||[]; const n=Math.max(sl.sets,arr.length);
       if(arr[n-1]&&arr[n-1].d){toast('Untick the last set first.');break} arr.length=Math.min(arr.length,n-1); sl.sets=Math.max(1,n-1); render(); break;}
     case 'slot': openPicker('swap',+el.dataset.i); break;
+    case 'quickswap': swapPanel(k,+el.dataset.i); break;
+    case 'swapfilter': {
+      const current=swapPickerContext(), filter=el.dataset.e;
+      if(current&&Object.hasOwn(SWAP_FILTERS,filter)){
+        const {p}=current; swapPanel(k,p.index,filter,p.fast,false);
+        document.querySelector('[data-act="swapfilter"][aria-pressed="true"]')?.focus({preventScroll:true});
+      }
+      break;}
+    case 'swapfast': {
+      const current=swapPickerContext();
+      if(current){
+        const {p}=current; swapPanel(k,p.index,p.filter,!p.fast,false);
+        document.querySelector('[data-act="swapfast"]')?.focus({preventScroll:true});
+      }
+      break;}
+    case 'swapbrowse': {
+      const current=swapPickerContext();
+      if(current){const {p}=current; closeLayer(); openPicker('swap',p.index)}
+      break;}
+    case 'swapapply': applyQuickSwap(el.dataset.id); break;
+    case 'swapundo': undoQuickSwap(); break;
     case 'addex': openPicker('add'); break;
     case 'pickg': S.pick.g=el.dataset.g; S.pick.q=''; renderPicker(); break;
-    case 'pickex': {const d=editDay(k); const lu=lineupFor(d,k); const id=el.dataset.id;
-      if(S.pick.mode==='swap'){const old=lu[S.pick.i].ex; lu[S.pick.i].ex=id; toast(`Swapped to ${exOf(id).n}${doneSets(d,old).length?` (your ${exOf(old).n} sets stay logged)`:''}`); closeLayer()}
-      // adding keeps the list open so a whole custom workout can be built in one go
-      else {lu.push(slotOf(id,exOf(id).sc)); toast(`Added ${exOf(id).n}`); const pl=document.getElementById('picklist'); if(pl) pl.innerHTML=pickList()}
-      render(); break;}
+    case 'pickex': swapFullPickerChoice(el.dataset.id); break;
     // tapping a partner moves it right under this exercise and links them; tapping a linked one unlinks it
     case 'sswith': {const d=editDay(k), lu=lineupFor(d,k), a=lu[S.pick.i], b=lu[+el.dataset.j];
       if(a.ss&&b.ss===a.ss){delete b.ss; tidySS(lu); toast(`${exOf(b.ex).n} unlinked`)}
@@ -3139,8 +4109,12 @@ document.addEventListener('click',async ev=>{
     case 'newex': {const name=S.pick.q.trim().replace(/\s+/g,' ').slice(0,60); if(!name) break;
       const g=S.pick.g||'core', id='x_'+uid().slice(0,8); S.customEx[id]={n:name.charAt(0).toUpperCase()+name.slice(1),g}; queueSave('exercises/'+id); applyCustomEx();
       const d=editDay(k), lu=lineupFor(d,k);
-      if(S.pick.mode==='swap'){lu[S.pick.i].ex=id; closeLayer(); toast(`Swapped to ${EX[id].n}`)}
-      else {lu.push(slotOf(id,'i')); S.pick.q=''; renderPicker(); toast(`Added ${EX[id].n}`)}
+      if(S.pick.mode==='swap'){
+        const current=lu[S.pick.i], sets=current&&swapRemaining(d,current);
+        if(!sets)break;
+        swapReplaceSlot(d,lu,S.pick.i,swapPrescription(current,id,sets));
+        closeLayer(); toast(`Swapped to ${EX[id].n}`);
+      }else {lu.push(slotOf(id,'i')); S.pick.q=''; renderPicker(); toast(`Added ${EX[id].n}`)}
       render(); break;}
     case 'rmslot': {const d=editDay(k); const lu=lineupFor(d,k); const [gone]=lu.splice(S.pick.i,1); closeLayer(); render(); toast(`Removed ${exOf(gone.ex).n} from today`); break;}
     case 'order': openOrder(); break;
@@ -3155,7 +4129,7 @@ document.addEventListener('click',async ev=>{
       d.finished={at:new Date().toISOString(),dur:sm.mins,vol:sm.vol,sets:sm.done,prs:sm.prs.length};
       const keep=document.getElementById('keeplu');
       if(keep&&keep.checked){
-        const full=clone(d.full||d.lineup);
+        const full=swapReusableLineup(d.full||d.lineup);
         if(pid==='custom'){const id=uid().slice(0,8), name=(document.getElementById('cname')?.value||'').trim().slice(0,40)||'Custom'; S.customs[id]={name,lineup:full}; queueSave('customs/'+id); d.plan='c_'+id; d.cname=name}
         else if(String(pid).startsWith('c_')&&S.customs[pid.slice(2)]){S.customs[pid.slice(2)].lineup=full; queueSave('customs/'+pid.slice(2))}
         else {S.tpl[pid]={lineup:full}; queueSave('templates/'+pid)}
@@ -3172,6 +4146,12 @@ document.addEventListener('click',async ev=>{
       const id=el.dataset.id, i=+el.dataset.i, [phW,phR]=el.dataset.ph.split('|');
       const d=editDay(k); lineupFor(d,k); d.sets=d.sets||{}; const arr=d.sets[id]=d.sets[id]||[]; while(arr.length<=i)arr.push({});
       const s=arr[i];
+      const slotIndex=lineupOf(k).findIndex(slot=>slot.ex===id&&!slot.skip);
+      const context=liveLiftContext(k,slotIndex)||{...liveEquipmentContext(id),superset:[]};
+      if(!s.d&&s.targetContext&&!liveSetContextMatches({liftContext:s.targetContext},context)){
+        delete s.targetContext; delete s.w; delete s.r;
+        render(); toast('Your setup changed. Enter the set you completed.'); break;
+      }
       const wIn=document.getElementById(`w-${id}-${i}`), rIn=document.getElementById(`r-${id}-${i}`);
       if(wIn&&wIn.value!=='') s.w=num(wIn.value); if(rIn&&rIn.value!=='') s.r=num(rIn.value);
       if(!s.d){
@@ -3188,11 +4168,13 @@ document.addEventListener('click',async ev=>{
         else if(s.w==null) toast(`Logged ${s.r} reps, weight not recorded. It counts as work, not toward load increases.`);
         else if(filled.length) toast(`Logged the suggested ${filled.join(' × ')}. Tap the box to change it.`);
         const lu=lineupOf(k), si=lu.findIndex(x=>x.ex===id), grp=si>=0?slotLabels(lu).grp[si]:null;
+        s.liftContext=liveLiftContext(k,si)||{...liveEquipmentContext(id),superset:[]};
+        delete s.targetContext;
         if(grp) s.ss=1;
         if(grp&&si!==grp[grp.length-1]) startRest(10,`${exOf(lu[si+1].ex).n} (superset, no rest)`);
         else if(grp) startRest(lu[grp[grp.length-1]].rest||90,`${exOf(lu[grp[0]].ex).n} (next round)`);
         else startRest(+el.dataset.rest||90,EX[id].n);
-      } else {s.d=false; delete s.at; delete s.rest; delete s.rir; delete s.ss}
+      } else {s.d=false; delete s.at; delete s.rest; delete s.rir; delete s.ss; delete s.liftContext}
       render(); break;}
     case 'restskip': rest.end=0; clearInterval(rest.iv); renderRest(); break;
     case 'rest30': rest.end+=30000; rest.total+=30; rest.beeped=false; renderRest(); break;
@@ -3246,7 +4228,11 @@ document.addEventListener('click',async ev=>{
         if(!id){id='x_'+uid().slice(0,8); const nm=(r.name||'Exercise').replace(/^\w/,c=>c.toUpperCase()); S.customEx[id]={n:nm,g:guessGroup(nm)}; queueSave('exercises/'+id); applyCustomEx()}
         if(!lu.some(s=>s.ex===id)) lu.push({...slotOf(id,exOf(id).sc),sets:r.sets});
         const arr=d.sets[id]=(d.sets[id]||[]).filter(s=>s&&s.d), bw=exOf(id).bw&&!assistOf(id);
-        for(let j=0;j<r.sets;j++) arr.push(r.w!=null?{d:true,r:r.reps,w:r.w,src:'text'}:bw?{d:true,r:r.reps,w:0,src:'text'}:{d:true,r:r.reps,w:null,wu0:true,src:'text'});
+        const liftContext=liveLiftContext(k,lu.findIndex(slot=>slot.ex===id));
+        for(let j=0;j<r.sets;j++){
+          const weight=r.w!=null?r.w:bw?0:null;
+          arr.push({d:true,r:r.reps,w:weight,src:'text',liftContext,...(weight==null?{wu0:true}:{})});
+        }
       }
       S.textLog=null; closeLayer(); render(); toast(`Added ${rows.length} exercise${rows.length>1?'s':''} from text`); break;}
     case 'prio': {const g=el.dataset.g, p=prioOf().slice(), j=p.indexOf(g); if(j>=0)p.splice(j,1); else p.push(g); S.profile.prio=p; saveProfile(); render(); break;}
@@ -3284,7 +4270,14 @@ document.addEventListener('input',ev=>{
   const el=ev.target, k=S.date;
   if(el.id==='pq'&&S.pick){S.pick.q=el.value; document.getElementById('picklist').innerHTML=pickList(); return}
   if(el.dataset.slot&&S.pick){const v=num(el.value); if(v==null||v<0) return; const d=editDay(k); const sl=lineupFor(d,k)[S.pick.i]; sl[el.dataset.slot]=el.dataset.slot==='sets'?Math.max(1,Math.round(v)):Math.round(v); render(); return}
-  if(el.dataset.set){const [id,i,f]=el.dataset.set.split('|'); const d=editDay(k); lineupFor(d,k); d.sets=d.sets||{}; const arr=d.sets[id]=d.sets[id]||[]; while(arr.length<=+i)arr.push({}); arr[+i][f]=el.value===''?null:num(el.value); if(f==='w'&&el.value!=='') delete arr[+i].wu0; return}
+  if(el.dataset.set){const [id,i,f]=el.dataset.set.split('|'); const d=editDay(k); lineupFor(d,k); d.sets=d.sets||{}; const arr=d.sets[id]=d.sets[id]||[]; while(arr.length<=+i)arr.push({}); const set=arr[+i], edited=el.value===''?null:num(el.value);
+    set[f]=edited;
+    if(f==='w'){
+      if(edited!=null)delete set.wu0;
+      delete set.targetContext;
+    }
+    if(set.d)pendingRender=true;
+    return}
   if(el.dataset.day){const d=editDay(k); const path=el.dataset.day.split('.'); const v=el.value===''?null:num(el.value); if(path.length===2){d[path[0]]=d[path[0]]||{};d[path[0]][path[1]]=v}else d[path[0]]=v; if(path[0]==='bw')pendingRender=true; return}
   if(el.dataset.prof){S.profile[el.dataset.prof]=el.value===''?null:num(el.value); saveProfile(); pendingRender=true; return}
   if(el.dataset.draft&&S.draft){S.draft[el.dataset.draft]=el.value; const b=document.querySelector('[data-act="estimate"]'); if(b&&S.draft.mode==='text')b.disabled=!el.value.trim(); return}

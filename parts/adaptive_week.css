@@ -1,0 +1,19 @@
+.aw-card h2{white-space:normal}
+.aw-card .btn,.aw-sheet .btn,.aw-sheet .iconbtn{min-height:44px}
+.aw-card .row:first-child,.aw-sheet .row{gap:8px}
+.aw-row{width:100%;display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 0;border:0;border-top:1px solid var(--line);background:none;color:var(--ink);text-align:left}
+button.aw-row{min-height:48px}
+.aw-row small,.aw-count small{display:block;color:var(--muted);font-size:13px}
+.aw-date{font-weight:700;font-size:13px}
+.aw-intro{margin:0}
+.aw-days{display:grid;grid-template-columns:repeat(auto-fit,minmax(60px,1fr));gap:6px}
+.aw-day{display:grid;gap:2px;place-items:center;min-height:53px;padding:5px 2px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-size:13px}
+.aw-day span{color:var(--muted)}
+.aw-day.on{background:var(--sunk);border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.aw-day:disabled,.aw-count .iconbtn:disabled{opacity:.45;cursor:default}
+.aw-count{display:grid;grid-template-columns:minmax(0,1fr) auto 24px auto;align-items:center;gap:8px;padding:9px 0;border-block:1px solid var(--line)}
+.aw-count>.num{text-align:center;font-size:20px}
+.aw-count .iconbtn{width:44px}
+.aw-review h3{margin:0 0 4px;font-size:15px}
+.aw-sheet .aw-review .aw-row:last-child{padding-bottom:0}
+@media(max-width:340px){.aw-days{grid-template-columns:repeat(auto-fit,minmax(52px,1fr))}.aw-count{gap:5px}}

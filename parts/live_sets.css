@@ -1,0 +1,7 @@
+.live-set{display:grid;gap:5px;margin:9px 0;padding:11px 12px;border:1px solid color-mix(in srgb,var(--line) 62%,#49997a);border-left:3px solid #49997a;border-radius:9px;background:color-mix(in srgb,var(--surface) 92%,#49997a)}
+.live-set-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--muted)}
+.live-set-main{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.live-set-action{font-weight:700;line-height:1.15}
+.live-set-main b{display:block;font-size:20px}
+.live-set-main .btn{min-height:40px}
+.live-set-history{border-top:1px solid var(--line);padding-top:5px;display:flex;gap:5px 13px;flex-wrap:wrap;font-size:12px;color:var(--muted)}

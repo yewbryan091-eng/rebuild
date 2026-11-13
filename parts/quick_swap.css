@@ -1,0 +1,13 @@
+.swap-sheet .swap-eyebrow{margin-bottom:4px;color:var(--muted);font-size:12px;font-weight:700}
+.swap-sheet .swap-meta{margin:0}
+.swap-sheet .swap-filter{display:grid;gap:5px}
+.swap-sheet .swap-filter b{font-size:13px}
+.swap-sheet .swap-filter .chipb{min-height:36px}
+.swap-sheet .swap-filter .chipb[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.swap-choices{display:grid;gap:6px}
+.swap-choice{display:grid;gap:2px;min-height:62px;width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);text-align:left;overflow-wrap:anywhere}
+.swap-choice strong{font-weight:800}
+.swap-choice span{color:var(--muted);font-size:13px}
+.swap-choice .swap-choice-kit{font-weight:700}
+.swap-carried{padding:2px 0}
+.swap-sheet :focus-visible{outline:2px solid var(--c-blue);outline-offset:2px}
