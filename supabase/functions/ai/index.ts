@@ -70,7 +70,9 @@ Deno.serve(async (req) => {
     if (!text.trim()) return fail("empty_completion");
     return reply({ text, stop: res.stop_reason, usage: res.usage });
   } catch (e) {
-    if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError) return fail("bad_key");
+    // log why Anthropic refused (never the key itself), so a rejected key can be diagnosed from the logs
+    if (e instanceof Anthropic.AuthenticationError) { console.error("auth", e.status, e.message); return fail("bad_key"); }
+    if (e instanceof Anthropic.PermissionDeniedError) { console.error("forbidden", e.status, e.message); return fail("no_access"); }
     if (e instanceof Anthropic.RateLimitError) return fail("rate_limited");
     if (e instanceof Anthropic.BadRequestError) {
       console.error("bad request", e.message);

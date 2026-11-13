@@ -1,5 +1,5 @@
 // Offline cache for the app itself. Bump V on every deploy; the new copy loads on the next launch.
-const V='rebuild-20261113135741';
+const V='rebuild-20261113140909';
 const SHELL=[
   './','index.html','manifest.webmanifest','vendor/supabase.js',
   'fonts/Barlow-400.woff2',
