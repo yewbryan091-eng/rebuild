@@ -4,7 +4,12 @@
 // wu0 (weight not recorded), at (tick time), rest (seconds since the previous set), ss (done inside a superset).
 const isWU = s=>!!s&&s.k==='wu';
 // performed work sets: ticked with reps. A loaded lift may have an unknown weight (w:null); it still counts as work done.
-function doneSets(day,exId){const ex=EX[exId]||{};const bw=ex.bw||ex.as;return ((day.sets||{})[exId]||[]).filter(s=>s&&s.d&&!isWU(s)&&num(s.r)!=null).map(s=>num(s.w)==null&&bw&&!s.wu0?{...s,w:0}:s)}
+function doneSets(day,exId){
+  const bodyweight=exOf(exId).bw&&!assistOf(exId);
+  return ((day.sets||{})[exId]||[])
+    .filter(s=>s&&s.d&&!isWU(s)&&num(s.r)>0)
+    .map(s=>num(s.w)==null&&bodyweight&&!s.wu0?{...s,w:0}:s);
+}
 // only sets with a known weight may drive records, volume and load changes
 const loadSets = (day,exId)=>doneSets(day,exId).filter(s=>num(s.w)!=null);
 
@@ -29,7 +34,7 @@ function readSession(k,id){
   const sets=all.filter(s=>num(s.w)!=null);
   let top=null; if(sets.length){const ws=sets.map(s=>num(s.w)); top=as?Math.min(...ws):Math.max(...ws)}
   const topSets=top==null?[]:sets.filter(s=>num(s.w)===top), back=top==null?[]:sets.filter(s=>num(s.w)!==top);
-  const rirs=topSets.map(s=>s.rir).filter(x=>x!=null&&x!=='u').map(Number);
+  const rirs=topSets.map(s=>num(s.rir)).filter(r=>r!=null&&r>=0&&r<=4);
   const rests=all.map(s=>num(s.rest)).filter(x=>x!=null&&x>0);
   return {k,all,sets,top,topSets,back,planned:slot?slot.sets:null,slot,
     pain:all.some(s=>s.pain), rirs, avgRir:rirs.length?rirs.reduce((a,b)=>a+b,0)/rirs.length:null,
@@ -44,21 +49,21 @@ function decide(id,sl,before){
   const out=(w,kind,why,goal=null)=>({w,lo,hi,eff,kind,up:kind==='up',down:kind==='down',why,last,ref,goal,
     head:`${w!=null?`${as?'Assist ':''}${ex.bw&&w===0&&!as?'Bodyweight':fmtW(w)+' kg'} · `:''}${lo}–${hi} reps · finish with ${eff.txt}`});
   if(!last) return out(null,'new',`First time: pick a weight you could lift ${hi} times with ${eff.txt}.`);
+  if(last.pain||ref?.pain) return out(null,'hold','You flagged pain or form breaking down. Choose a lighter setup or a different exercise if needed. Stop if it hurts.');
   if(!ref) return out(null,'unknown',`Last time the weight wasn't logged (${last.all.map(s=>s.r).join('/')} reps). Pick a weight for ${lo}–${hi} reps and log it this time.`);
   const w0=ref.top, reps=ref.topSets.map(s=>num(s.r)), need=Math.max(1,ref.planned||sl.sets);
   const note=ref!==last?' (latest session had no weights logged)':'';
   const bwZero=ex.bw&&w0===0&&!as, upW=as?Math.max(0,w0-inc):w0+inc;
-  if(ref.pain) return out(w0,'hold',`Last time you flagged pain or form breaking down. Same weight or lighter, and stop the set if it hurts.`);
-  // a top set plus lighter back-off sets counts as complete only when the back-offs held the rep range
-  const backOk=ref.back.length>0&&ref.back.every(s=>num(s.r)>=lo)&&ref.topSets.length+ref.back.length>=need;
-  if(ref.topSets.length<need&&!backOk){
-    if(ref.back.length&&ref.topSets.length+ref.back.length>=need) return out(w0,'hold',`Only ${ref.topSets.length} set${ref.topSets.length>1?'s':''} at ${fmtW(w0)} kg; the rest dropped lighter (${ref.back.map(s=>fmtSet(id,s)).join(', ')}). Same ${fmtW(w0)} kg; aim for all ${need} sets there.`);
+  // Mixed loads do not establish that the session had a planned top set and back-off sets.
+  if(ref.back.length) return out(w0,'hold',`Your work sets used different ${as?'assistance levels':'weights'} (${ref.sets.map(s=>fmtSet(id,s)).join(', ')}). Keep the same ${as?'lowest assistance':'top weight'} for now and log the effort on each set.`);
+  if(ref.topSets.length<need){
     return out(w0,'hold',`Last time ${ref.sets.length} of ${need} set${need>1?'s':''} ${ref.all.length>ref.sets.length?(ref.sets.length===1?'had a weight':'had weights')+' logged':ref.sets.length===1?'was logged':'were logged'}${note}. Same weight; get all ${need} in before adding load.`);
   }
   const allTop=reps.every(r=>r>=hi), below=reps.filter(r=>r<lo).length;
-  const blockTxt=ref.back.length?'your top set':`all ${ref.topSets.length} sets`;
+  const blockTxt=ref.topSets.length===1?'your work set':`all ${ref.topSets.length} sets`;
   if(allTop){
-    if(ref.avgRir!=null&&ref.avgRir<eff.lo-1) return out(w0,'hold',`You hit ${hi} on ${blockTxt}, but with only ${Math.round(ref.avgRir)} rep${Math.round(ref.avgRir)===1?'':'s'} left. Same weight until it feels like ${eff.txt}.`,reps);
+    const lowestRir=ref.rirs.length?Math.min(...ref.rirs):null;
+    if(lowestRir!=null&&lowestRir<eff.lo) return out(w0,'hold',`You hit ${hi} on ${blockTxt}. Your hardest set had ${lowestRir} clean rep${lowestRir===1?'':'s'} left. Repeat the same setup and aim for ${eff.txt}.`,reps);
     if(bwZero) return out(0,'up',`Hit ${hi}+ on ${blockTxt}${note}. Add 2.5 kg, or slow the lowering to 3 seconds.`);
     return out(upW,'up',`Hit ${hi} on ${blockTxt} at ${fmtW(w0)} kg${note}. ${as?'Lower the assist':'Go up'} to ${fmtW(upW)} kg and start at ${lo} reps.`,[lo]);
   }
@@ -112,13 +117,35 @@ const slotMinutes = sl=>Math.round(sl.sets*((sl.rest||90)+40)/60)+1;
 // fill the time with the most useful work: big lifts first, then muscles that have had little this week, priorities a bit higher
 function pickShort(lu,mins,k){
   const cov=coverage(7,addDays(k,-1)), prio=prioOf();
-  const left=runs(lu).map((r,ri)=>{const sls=r.map(i=>lu[i]);return {r,ri,t:sls.reduce((a,s)=>a+slotMinutes(s),0),gs:sls.map(s=>exOf(s.ex).g),
-    base:Math.max(...sls.map(s=>{const sc=exOf(s.ex).sc;return sc==='C'?6:sc==='c'?4:2}))-ri*0.3}});
+  const day=getDay(k), group=day.rankFocus?.group;
+  const mission=MAIN_GROUPS.includes(group)?rankMission(k,group):null;
+  const focusRemaining=mission?mission.target-mission.work:0;
+  const left=runs(lu).map((run,ri)=>{
+    const r=run.filter(i=>!lu[i].skip), sls=r.map(i=>lu[i]);
+    const focusSets=sls.filter(s=>exOf(s.ex).g===group)
+      .reduce((n,s)=>n+Math.max(0,s.sets-doneSets(day,s.ex).length),0);
+    return {r,ri,focusSets,t:sls.reduce((a,s)=>a+slotMinutes(s),0),gs:sls.map(s=>exOf(s.ex).g),
+      base:Math.max(...sls.map(s=>{const sc=exOf(s.ex).sc;return sc==='C'?6:sc==='c'?4:2}))-ri*0.3};
+  }).filter(g=>g.r.length);
   const chosen=[], have=new Set(); let used=0;
+  // Reserve time for the focus only if the remaining sets fit as a group.
+  const focus=left.filter(g=>g.focusSets>0).sort((a,b)=>a.t-b.t||a.ri-b.ri);
+  const reserved=[];
+  let reservedSets=0, reservedTime=0;
+  for(const g of focus){
+    if(reservedSets>=focusRemaining)break;
+    if(reservedTime+g.t>mins)continue;
+    reserved.push(g); reservedTime+=g.t; reservedSets+=g.focusSets;
+  }
+  if(focusRemaining>0&&reservedSets>=focusRemaining){
+    for(const g of reserved){
+      chosen.push(g); used+=g.t; g.gs.forEach(m=>have.add(m)); left.splice(left.indexOf(g),1);
+    }
+  }
   while(left.length){
     let best=null;
     for(const g of left){let s=g.base;for(const m of g.gs){const n=cov[m]||0;s+=n<4?3:n<8?1:0;if(prio.includes(m))s+=1.5;if(have.has(m))s-=3}if(!best||s>best.s)best={g,s}}
-    if(chosen.length&&used+best.g.t>mins){left.splice(left.indexOf(best.g),1);continue}
+    if(used+best.g.t>mins){left.splice(left.indexOf(best.g),1);continue}
     chosen.push(best.g); used+=best.g.t; best.g.gs.forEach(m=>have.add(m)); left.splice(left.indexOf(best.g),1);
   }
   return {keep:chosen.sort((a,b)=>a.ri-b.ri).flatMap(g=>g.r),used};
@@ -206,7 +233,7 @@ function openShort(){
   document.getElementById('layer').innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true" aria-label="Short session">
     <div class="grab"></div>
     <div class="row between"><h2 class="sheet-h">How long have you got?</h2><button class="iconbtn" data-act="closebtn" aria-label="Close">✕</button></div>
-    <div class="small muted">Keeps the big lifts first, then the muscles you've hit least this week${prioOf().length?` (priorities: ${prioOf().map(g=>GROUPS[g]).join(', ')})`:''}. Sets you already ticked stay logged.</div>
+    <div class="small muted">Keeps your selected focus when it fits, then looks for big lifts and muscles with less work this week. Sets you already ticked stay logged.</div>
     <div class="row">${[30,45,60].map(m=>`<button class="btn pri" data-act="shortgo" data-m="${m}" style="flex:1">${m} min</button>`).join('')}</div>
   </div></div>`;
 }

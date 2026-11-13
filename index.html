@@ -310,7 +310,7 @@ td{padding:7px 6px 7px 0;border-top:1px solid var(--line);font-variant-numeric:t
 
 /* bottom */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr)}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr)}
 .tabs button{background:none;border:0;padding:9px 0 8px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.03em}
 .tabs button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .tabs button.on{color:var(--ink)}
@@ -367,6 +367,44 @@ details.equip{background:var(--sunk);border-radius:10px;padding:8px 10px}
 details.equip summary{font-weight:700;cursor:pointer}
 @media (prefers-reduced-motion: reduce){.spin{animation:none}}
 @media (max-width:380px){.hero h1{font-size:54px}.set{grid-template-columns:22px minmax(0,1fr) minmax(0,1fr) 42px;gap:6px}.sync span{display:none}}
+.rank-stage{padding:18px 16px 14px;border-radius:var(--r,14px);background:#15272e;color:#f3f6f1;overflow:hidden}
+.rank-stage-head,.rank-detail-head,.rank-counts,.rank-map-labels,.rank-focus,.rank-recap-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rank-stage-head{align-items:baseline;flex-wrap:wrap}
+.rank-stage-head h1{font:900 clamp(31px,7vw,46px)/.95 var(--display);margin:0;text-transform:uppercase}
+.rank-stage-head>span,.rank-map-labels,.rank-legend{font-size:12px;color:#c7d7d2}
+#rank-map{display:block;width:100%;max-width:460px;height:auto;margin:4px auto 0;cursor:pointer}
+.rank-map-labels{max-width:460px;margin:-2px auto 10px;justify-content:space-around;text-transform:uppercase;letter-spacing:.11em}
+.rank-legend{display:flex;justify-content:center;flex-wrap:wrap;gap:8px 16px;padding-top:9px;border-top:1px solid #415459}
+.rank-legend span{display:flex;align-items:center;gap:5px}
+.rank-legend i{width:9px;height:9px;border-radius:50%;background:#3c545a}
+.rank-legend span:nth-child(2) i{background:#477d6c}
+.rank-legend span:nth-child(3) i{background:#76bc9c}
+.rank-detail{gap:10px}
+.rank-overline{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.rank-tier{padding:5px 10px;border:1px solid #b69966;border-radius:6px;background:#e9ce91;color:#222a27;font-size:14px}
+.rank-meter{height:7px;border-radius:4px;background:var(--sunk);overflow:hidden}
+.rank-meter span{display:block;height:100%;border-radius:4px;background:#49997a}
+.rank-counts{font-size:13px;color:var(--muted)}
+.rank-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:9px 0;border-block:1px solid var(--line)}
+.rank-stats div{display:grid}
+.rank-stats b{font:800 24px/1.1 var(--display)}
+.rank-stats span,.rank-mission span{font-size:13px;color:var(--muted)}
+.rank-mission{display:grid;gap:3px}
+.rank-start{background:#265746;color:#fff;border-color:#265746;align-self:flex-start}
+.rank-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.rank-pick{min-width:0;min-height:48px;text-align:left;padding:7px 9px;color:var(--ink);border:1px solid var(--line);border-radius:7px;background:var(--surface);font-weight:700;cursor:pointer}
+.rank-pick small{display:block;color:var(--muted);font-weight:500}
+.rank-pick[aria-pressed="true"]{border-color:#49997a;box-shadow:inset 0 0 0 1px #49997a}
+.rank-pick:focus-visible,.rank-start:focus-visible,.rank-rules summary:focus-visible{outline:2px solid #49997a;outline-offset:2px}
+.rank-rules{font-size:13px;color:var(--muted)}
+.rank-rules summary{cursor:pointer}
+.rank-rules p{margin:5px 0 0}
+.rank-focus{flex-direction:row;flex-wrap:wrap}
+.rank-complete{font-weight:800;color:var(--ink)}
+.rank-recap-row{font-size:14px}
+.rank-recap-row b{text-align:right}
+[data-rank-exercise]{scroll-margin-top:80px}
+
 </style>
 </head><body>
 
@@ -387,6 +425,7 @@ details.equip summary{font-weight:700;cursor:pointer}
   <nav class="tabs" id="tabs">
     <button data-act="tab" data-v="today"><svg viewBox="0 0 24 24"><path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"/></svg>Train</button>
     <button data-act="tab" data-v="log"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Log</button>
+    <button data-act="tab" data-v="rank"><svg viewBox="0 0 24 24"><path d="m12 3 7 4v6l-7 8-7-8V7zM9 12l2 2 4-4"/></svg>Rank</button>
     <button data-act="tab" data-v="food"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7"/><path d="M12 13l3-3M5 4l2 2M19 4l-2 2"/></svg>Food</button>
     <button data-act="tab" data-v="body"><svg viewBox="0 0 24 24"><path d="M4 20l4-9 4 4 4-8 4 13"/></svg>Body</button>
   </nav>
@@ -1681,7 +1720,12 @@ function lineupFor(d,k){if(!d.plan)d.plan=planOf(k);if(!d.lineup)d.lineup=clone(
 // wu0 (weight not recorded), at (tick time), rest (seconds since the previous set), ss (done inside a superset).
 const isWU = s=>!!s&&s.k==='wu';
 // performed work sets: ticked with reps. A loaded lift may have an unknown weight (w:null); it still counts as work done.
-function doneSets(day,exId){const ex=EX[exId]||{};const bw=ex.bw||ex.as;return ((day.sets||{})[exId]||[]).filter(s=>s&&s.d&&!isWU(s)&&num(s.r)!=null).map(s=>num(s.w)==null&&bw&&!s.wu0?{...s,w:0}:s)}
+function doneSets(day,exId){
+  const bodyweight=exOf(exId).bw&&!assistOf(exId);
+  return ((day.sets||{})[exId]||[])
+    .filter(s=>s&&s.d&&!isWU(s)&&num(s.r)>0)
+    .map(s=>num(s.w)==null&&bodyweight&&!s.wu0?{...s,w:0}:s);
+}
 // only sets with a known weight may drive records, volume and load changes
 const loadSets = (day,exId)=>doneSets(day,exId).filter(s=>num(s.w)!=null);
 
@@ -1706,7 +1750,7 @@ function readSession(k,id){
   const sets=all.filter(s=>num(s.w)!=null);
   let top=null; if(sets.length){const ws=sets.map(s=>num(s.w)); top=as?Math.min(...ws):Math.max(...ws)}
   const topSets=top==null?[]:sets.filter(s=>num(s.w)===top), back=top==null?[]:sets.filter(s=>num(s.w)!==top);
-  const rirs=topSets.map(s=>s.rir).filter(x=>x!=null&&x!=='u').map(Number);
+  const rirs=topSets.map(s=>num(s.rir)).filter(r=>r!=null&&r>=0&&r<=4);
   const rests=all.map(s=>num(s.rest)).filter(x=>x!=null&&x>0);
   return {k,all,sets,top,topSets,back,planned:slot?slot.sets:null,slot,
     pain:all.some(s=>s.pain), rirs, avgRir:rirs.length?rirs.reduce((a,b)=>a+b,0)/rirs.length:null,
@@ -1721,21 +1765,21 @@ function decide(id,sl,before){
   const out=(w,kind,why,goal=null)=>({w,lo,hi,eff,kind,up:kind==='up',down:kind==='down',why,last,ref,goal,
     head:`${w!=null?`${as?'Assist ':''}${ex.bw&&w===0&&!as?'Bodyweight':fmtW(w)+' kg'} · `:''}${lo}–${hi} reps · finish with ${eff.txt}`});
   if(!last) return out(null,'new',`First time: pick a weight you could lift ${hi} times with ${eff.txt}.`);
+  if(last.pain||ref?.pain) return out(null,'hold','You flagged pain or form breaking down. Choose a lighter setup or a different exercise if needed. Stop if it hurts.');
   if(!ref) return out(null,'unknown',`Last time the weight wasn't logged (${last.all.map(s=>s.r).join('/')} reps). Pick a weight for ${lo}–${hi} reps and log it this time.`);
   const w0=ref.top, reps=ref.topSets.map(s=>num(s.r)), need=Math.max(1,ref.planned||sl.sets);
   const note=ref!==last?' (latest session had no weights logged)':'';
   const bwZero=ex.bw&&w0===0&&!as, upW=as?Math.max(0,w0-inc):w0+inc;
-  if(ref.pain) return out(w0,'hold',`Last time you flagged pain or form breaking down. Same weight or lighter, and stop the set if it hurts.`);
-  // a top set plus lighter back-off sets counts as complete only when the back-offs held the rep range
-  const backOk=ref.back.length>0&&ref.back.every(s=>num(s.r)>=lo)&&ref.topSets.length+ref.back.length>=need;
-  if(ref.topSets.length<need&&!backOk){
-    if(ref.back.length&&ref.topSets.length+ref.back.length>=need) return out(w0,'hold',`Only ${ref.topSets.length} set${ref.topSets.length>1?'s':''} at ${fmtW(w0)} kg; the rest dropped lighter (${ref.back.map(s=>fmtSet(id,s)).join(', ')}). Same ${fmtW(w0)} kg; aim for all ${need} sets there.`);
+  // Mixed loads do not establish that the session had a planned top set and back-off sets.
+  if(ref.back.length) return out(w0,'hold',`Your work sets used different ${as?'assistance levels':'weights'} (${ref.sets.map(s=>fmtSet(id,s)).join(', ')}). Keep the same ${as?'lowest assistance':'top weight'} for now and log the effort on each set.`);
+  if(ref.topSets.length<need){
     return out(w0,'hold',`Last time ${ref.sets.length} of ${need} set${need>1?'s':''} ${ref.all.length>ref.sets.length?(ref.sets.length===1?'had a weight':'had weights')+' logged':ref.sets.length===1?'was logged':'were logged'}${note}. Same weight; get all ${need} in before adding load.`);
   }
   const allTop=reps.every(r=>r>=hi), below=reps.filter(r=>r<lo).length;
-  const blockTxt=ref.back.length?'your top set':`all ${ref.topSets.length} sets`;
+  const blockTxt=ref.topSets.length===1?'your work set':`all ${ref.topSets.length} sets`;
   if(allTop){
-    if(ref.avgRir!=null&&ref.avgRir<eff.lo-1) return out(w0,'hold',`You hit ${hi} on ${blockTxt}, but with only ${Math.round(ref.avgRir)} rep${Math.round(ref.avgRir)===1?'':'s'} left. Same weight until it feels like ${eff.txt}.`,reps);
+    const lowestRir=ref.rirs.length?Math.min(...ref.rirs):null;
+    if(lowestRir!=null&&lowestRir<eff.lo) return out(w0,'hold',`You hit ${hi} on ${blockTxt}. Your hardest set had ${lowestRir} clean rep${lowestRir===1?'':'s'} left. Repeat the same setup and aim for ${eff.txt}.`,reps);
     if(bwZero) return out(0,'up',`Hit ${hi}+ on ${blockTxt}${note}. Add 2.5 kg, or slow the lowering to 3 seconds.`);
     return out(upW,'up',`Hit ${hi} on ${blockTxt} at ${fmtW(w0)} kg${note}. ${as?'Lower the assist':'Go up'} to ${fmtW(upW)} kg and start at ${lo} reps.`,[lo]);
   }
@@ -1789,13 +1833,35 @@ const slotMinutes = sl=>Math.round(sl.sets*((sl.rest||90)+40)/60)+1;
 // fill the time with the most useful work: big lifts first, then muscles that have had little this week, priorities a bit higher
 function pickShort(lu,mins,k){
   const cov=coverage(7,addDays(k,-1)), prio=prioOf();
-  const left=runs(lu).map((r,ri)=>{const sls=r.map(i=>lu[i]);return {r,ri,t:sls.reduce((a,s)=>a+slotMinutes(s),0),gs:sls.map(s=>exOf(s.ex).g),
-    base:Math.max(...sls.map(s=>{const sc=exOf(s.ex).sc;return sc==='C'?6:sc==='c'?4:2}))-ri*0.3}});
+  const day=getDay(k), group=day.rankFocus?.group;
+  const mission=MAIN_GROUPS.includes(group)?rankMission(k,group):null;
+  const focusRemaining=mission?mission.target-mission.work:0;
+  const left=runs(lu).map((run,ri)=>{
+    const r=run.filter(i=>!lu[i].skip), sls=r.map(i=>lu[i]);
+    const focusSets=sls.filter(s=>exOf(s.ex).g===group)
+      .reduce((n,s)=>n+Math.max(0,s.sets-doneSets(day,s.ex).length),0);
+    return {r,ri,focusSets,t:sls.reduce((a,s)=>a+slotMinutes(s),0),gs:sls.map(s=>exOf(s.ex).g),
+      base:Math.max(...sls.map(s=>{const sc=exOf(s.ex).sc;return sc==='C'?6:sc==='c'?4:2}))-ri*0.3};
+  }).filter(g=>g.r.length);
   const chosen=[], have=new Set(); let used=0;
+  // Reserve time for the focus only if the remaining sets fit as a group.
+  const focus=left.filter(g=>g.focusSets>0).sort((a,b)=>a.t-b.t||a.ri-b.ri);
+  const reserved=[];
+  let reservedSets=0, reservedTime=0;
+  for(const g of focus){
+    if(reservedSets>=focusRemaining)break;
+    if(reservedTime+g.t>mins)continue;
+    reserved.push(g); reservedTime+=g.t; reservedSets+=g.focusSets;
+  }
+  if(focusRemaining>0&&reservedSets>=focusRemaining){
+    for(const g of reserved){
+      chosen.push(g); used+=g.t; g.gs.forEach(m=>have.add(m)); left.splice(left.indexOf(g),1);
+    }
+  }
   while(left.length){
     let best=null;
     for(const g of left){let s=g.base;for(const m of g.gs){const n=cov[m]||0;s+=n<4?3:n<8?1:0;if(prio.includes(m))s+=1.5;if(have.has(m))s-=3}if(!best||s>best.s)best={g,s}}
-    if(chosen.length&&used+best.g.t>mins){left.splice(left.indexOf(best.g),1);continue}
+    if(used+best.g.t>mins){left.splice(left.indexOf(best.g),1);continue}
     chosen.push(best.g); used+=best.g.t; best.g.gs.forEach(m=>have.add(m)); left.splice(left.indexOf(best.g),1);
   }
   return {keep:chosen.sort((a,b)=>a.ri-b.ri).flatMap(g=>g.r),used};
@@ -1883,7 +1949,7 @@ function openShort(){
   document.getElementById('layer').innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true" aria-label="Short session">
     <div class="grab"></div>
     <div class="row between"><h2 class="sheet-h">How long have you got?</h2><button class="iconbtn" data-act="closebtn" aria-label="Close">✕</button></div>
-    <div class="small muted">Keeps the big lifts first, then the muscles you've hit least this week${prioOf().length?` (priorities: ${prioOf().map(g=>GROUPS[g]).join(', ')})`:''}. Sets you already ticked stay logged.</div>
+    <div class="small muted">Keeps your selected focus when it fits, then looks for big lifts and muscles with less work this week. Sets you already ticked stay logged.</div>
     <div class="row">${[30,45,60].map(m=>`<button class="btn pri" data-act="shortgo" data-m="${m}" style="flex:1">${m} min</button>`).join('')}</div>
   </div></div>`;
 }
@@ -2199,6 +2265,211 @@ function coachCard(mon){
   return h;
 }
 
+/* Personal muscle ranks. Credits come from saved sessions and are derived on every device. */
+const RANK_TIERS = [
+  ['Unranked', 0], ['Bronze', 1], ['Silver', 12], ['Gold', 32], ['Platinum', 64], ['Diamond', 112]
+];
+const RANK_SESSION_CAP = 4;
+const RANK_WEEK_CAP = 8;
+
+function rankWork(day) {
+  const work = {};
+  for (const id of Object.keys(day.sets || {})) {
+    const group = EX[id]?.g;
+    if (!MAIN_GROUPS.includes(group)) continue;
+    const count = doneSets(day, id).filter(set => num(set.r) > 0).length;
+    if (count) work[group] = (work[group] || 0) + count;
+  }
+  return work;
+}
+
+function rankHistory(end) {
+  const totals = {}, byDay = {}, weeks = {};
+  for (const date of Object.keys(S.days).filter(date => date <= end).sort()) {
+    const day = S.days[date];
+    if (!day.finished) continue;
+    const week = weeks[mondayOf(date)] ||= {};
+    const earned = byDay[date] = {};
+    for (const [group, count] of Object.entries(rankWork(day))) {
+      const left = RANK_WEEK_CAP - (week[group] || 0);
+      const credit = Math.min(count, RANK_SESSION_CAP, left);
+      if (!credit) continue;
+      earned[group] = credit;
+      week[group] = (week[group] || 0) + credit;
+      totals[group] = (totals[group] || 0) + credit;
+    }
+  }
+  return {totals, byDay, weeks};
+}
+
+function rankTier(credits) {
+  let index = RANK_TIERS.length - 1;
+  while (credits < RANK_TIERS[index][1]) index--;
+  const [name, floor] = RANK_TIERS[index];
+  const next = RANK_TIERS[index + 1];
+  return {name, next: next?.[0], remaining: next ? next[1] - credits : 0,
+    percent: next ? (credits - floor) / (next[1] - floor) * 100 : 100};
+}
+
+function rankOptions(date, group) {
+  return lineupOf(date).filter(slot => !slot.skip && EX[slot.ex]?.g === group && slot.sets > 0);
+}
+
+function rankMission(date, group) {
+  const day = getDay(date);
+  if (day.rankFocus?.group !== group) return null;
+  const {target} = day.rankFocus;
+  if (!Number.isInteger(target) || target < 1 || target > 3) return null;
+  const work = rankWork(day)[group] || 0;
+  const slots = rankOptions(date, group);
+  const available = slots.reduce((sum, slot) => sum + Math.max(0, slot.sets - doneSets(day, slot.ex).length), 0);
+  const next = slots.find(slot => doneSets(day, slot.ex).length < slot.sets);
+  return {target, work: Math.min(target, work), complete: work >= target,
+    fits: work + available >= target, next};
+}
+
+function rankFocusCard(date) {
+  const group = getDay(date).rankFocus?.group;
+  if (!MAIN_GROUPS.includes(group)) return '';
+  const mission = rankMission(date, group);
+  if (!mission) return '';
+  const {work, target, complete, fits, next} = mission;
+  const finished = !!getDay(date).finished;
+  const status = complete ? 'Focus complete' : finished ? `${work} of ${target} work sets · session saved` :
+    fits ? `${work} of ${target} work sets` : 'Workout changed. Choose a focus that fits.';
+  return `<section class="card rank-focus">
+    <div><h2>${esc(GROUPS[group])} focus</h2><div class="small muted">${status}</div></div>
+    ${complete ? '<span class="rank-complete" aria-label="Complete">✓</span>' : finished ? '' : fits && next ?
+      `<button class="btn sm" data-act="rankexercise" data-id="${esc(next.ex)}">Go to exercise</button>` :
+      '<button class="btn sm" data-act="tab" data-v="rank">Choose focus</button>'}
+  </section>`;
+}
+
+function rankRecap(date) {
+  const {byDay, totals} = rankHistory(date);
+  const entries = Object.entries(byDay[date] || {});
+  if (!entries.length) return '';
+  const lines = entries.map(([group, count]) => {
+    const current = rankTier(totals[group]).name;
+    const promoted = current !== rankTier(totals[group] - count).name;
+    return `<div class="rank-recap-row"><span>${esc(GROUPS[group])}</span><b>${promoted ? `${current} unlocked · ` : ''}+${count} credit${count === 1 ? '' : 's'}</b></div>`;
+  }).join('');
+  return `<section class="card rank-recap"><div class="row between"><h2>Rank progress</h2>
+    <button class="btn sm" data-act="tab" data-v="rank">View ranks</button></div>${lines}</section>`;
+}
+
+function rankView(date) {
+  const end = date <= todayKey() ? date : todayKey();
+  const {totals, weeks} = rankHistory(end);
+  const currentWeek = weeks[mondayOf(end)] || {};
+  const coverage7 = coverage(7, end), coverage14 = coverage(14, end);
+  const day = getDay(date), priorities = prioOf();
+  const available = MAIN_GROUPS.filter(group => rankOptions(date, group).length);
+  const candidates = available.filter(group => priorities.includes(group));
+  const suggested = (candidates.length ? candidates : available).sort((a, b) =>
+    (coverage7[a] || 0) - (coverage7[b] || 0))[0];
+  const group = [S.rankGroup, day.rankFocus?.group, suggested, ...priorities, 'back']
+    .find(item => MAIN_GROUPS.includes(item));
+  const slots = rankOptions(date, group);
+  const credits = totals[group] || 0, tier = rankTier(credits);
+  const mission = rankMission(date, group);
+  const mayChoose = date === todayKey() && !day.finished;
+  const name = GROUPS[group];
+  const rows = MAIN_GROUPS.map(item => `<button class="rank-pick" data-act="rankgroup" data-g="${item}" aria-pressed="${item === group}">
+    <span>${esc(GROUPS[item])}</span><small>${coverage7[item] || 0} sets · ${rankTier(totals[item] || 0).name}</small></button>`).join('');
+  let focus = '';
+  if (mission) {
+    const {work, target, complete, fits} = mission;
+    focus = `<div class="rank-mission"><b>${complete ? 'Focus complete' : `${work} / ${target} work sets`}</b>
+      <span>${mayChoose && !complete && !fits ? 'Your workout changed. Pick a focus that fits your plan.' : esc(name)}</span></div>`;
+    if (mayChoose) focus += '<button class="btn sm ghost" data-act="rankclear">Clear focus</button>';
+  } else if (mayChoose && slots.length) {
+    const lifts = [...new Set(slots.map(slot => exOf(slot.ex).n))].map(esc).join(' · ');
+    focus = `<div class="rank-mission"><b>Fits today’s workout</b><span>${lifts}</span></div>
+      <button class="btn rank-start" data-act="rankfocus" data-g="${group}">Set ${esc(name.toLowerCase())} focus</button>`;
+  } else if (mayChoose) {
+    focus = `<div class="rank-mission"><b>No direct ${esc(name.toLowerCase())} work planned today</b><span>Choose a muscle already in today’s workout.</span></div>`;
+  }
+  return `<section class="rank-stage">
+    <div class="rank-stage-head"><h1>Muscle ranks</h1><span>Direct work · 7 days</span></div>
+    <canvas id="rank-map" width="480" height="350" aria-hidden="true" data-act="rankmap" data-g="${group}" data-cover="${esc(JSON.stringify(coverage7))}"></canvas>
+    <div class="rank-map-labels" aria-hidden="true"><span>Front</span><span>Back</span></div>
+    <div class="rank-legend"><span><i></i>No sets</span><span><i></i>1–3 sets</span><span><i></i>4+ sets</span></div>
+  </section>
+  <section class="card rank-detail">
+    <div class="rank-detail-head"><div><span class="rank-overline">Personal rank</span><h2>${esc(name)}</h2></div>
+      <strong class="rank-tier">${tier.name}</strong></div>
+    <div class="rank-meter" role="progressbar" aria-label="Progress within ${tier.name}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(tier.percent)}"><span style="width:${tier.percent}%"></span></div>
+    <div class="rank-counts"><span>${credits} total credits</span><span>${tier.next ? `${tier.remaining} to ${tier.next}` : 'Highest rank'}</span></div>
+    <div class="rank-stats"><div><b>${coverage7[group] || 0}</b><span>sets · 7 days</span></div><div><b>${coverage14[group] || 0}</b><span>sets · 14 days</span></div><div><b>${currentWeek[group] || 0}/${RANK_WEEK_CAP}</b><span>credits this week</span></div></div>
+    ${focus}
+  </section>
+  <section class="card"><h2>Choose a muscle</h2><div class="rank-groups">${rows}</div>
+    <details class="rank-rules"><summary>How credits work</summary><p>Finish a session to earn one credit per work set for its main muscle. Each muscle earns up to ${RANK_SESSION_CAP} credits per day and ${RANK_WEEK_CAP} per week. Warm-ups earn zero. Credits measure logged training. Use your lift history to check strength progress.</p></details>
+  </section>`;
+}
+
+// Left-half regions are mirrored to show both sides. The list provides the same controls by keyboard.
+const RANK_REGIONS = {
+  front: [
+    ['shoulders', 'M75 65 Q55 69 49 89 L53 106 L68 98 L81 79 Z'],
+    ['chest', 'M96 74 L81 72 L69 92 L72 115 Q84 122 96 112 Z'],
+    ['biceps', 'M55 109 L68 100 L64 129 Q61 145 49 152 L46 136 Z'],
+    ['core', 'M96 118 L76 120 L79 156 L94 185 L96 166 Z'],
+    ['quads', 'M92 187 L76 161 Q65 181 68 209 L76 250 L90 248 Z'],
+    ['calves', 'M77 255 L90 253 L86 295 L82 316 L76 291 Z']
+  ],
+  back: [
+    ['rear', 'M75 65 Q55 69 49 89 L53 106 L68 98 L81 79 Z'],
+    ['back', 'M96 70 L81 68 L70 95 L74 123 L85 148 L96 156 Z'],
+    ['triceps', 'M55 109 L68 100 L64 129 Q61 145 49 152 L46 136 Z'],
+    ['glutes', 'M96 157 L76 151 L70 176 Q72 192 92 190 L96 179 Z'],
+    ['hams', 'M92 195 L72 190 L68 210 L76 250 L90 248 Z'],
+    ['calves', 'M77 255 L90 253 L87 285 L81 315 L75 287 Z']
+  ]
+};
+const RANK_BODY = 'M98 7 C78 7 77 27 83 44 L89 56 Q87 65 68 65 Q51 68 47 87 L43 112 L36 145 L30 164 L18 197 Q18 206 24 205 L34 184 L43 166 L52 150 L64 125 L68 107 Q67 130 76 153 Q64 179 66 200 L70 229 L74 254 Q70 277 76 302 L76 322 L66 328 Q62 334 72 335 L87 335 Q91 334 89 326 L92 293 L94 257 L98 211';
+
+function rankDraw(canvas, point) {
+  if (!canvas) return null;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+  const cover = JSON.parse(canvas.dataset.cover);
+  const selected = canvas.dataset.g;
+  let group = null;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (const [view, offset] of [['front', 22], ['back', 262]]) {
+    for (const mirror of [false, true]) {
+      ctx.save();
+      ctx.translate(offset + (mirror ? 196 : 0), 5);
+      if (mirror) ctx.scale(-1, 1);
+      ctx.fillStyle = '#293d43';
+      ctx.fill(new Path2D(RANK_BODY));
+      for (const [id, path] of RANK_REGIONS[view]) {
+        const region = new Path2D(path);
+        const n = cover[id] || 0;
+        ctx.fillStyle = n >= 4 ? '#76bc9c' : n > 0 ? '#477d6c' : '#3c545a';
+        ctx.fill(region);
+        if (selected === id) {
+          ctx.strokeStyle = '#e9ce91';
+          ctx.lineWidth = 2.5;
+          ctx.stroke(region);
+        }
+        if (point && ctx.isPointInPath(region, point.x, point.y)) group = id;
+      }
+      ctx.restore();
+    }
+  }
+  return group;
+}
+
+function rankJump(id) {
+  const section = [...document.querySelectorAll('[data-rank-exercise]')].find(el => el.dataset.rankExercise === id);
+  if (!section) return;
+  section.scrollIntoView({block:'start', behavior:REDUCE.matches ? 'instant' : 'smooth'});
+  section.querySelector('.head')?.focus({preventScroll:true});
+}
+
 /* ============ rendering ============ */
 let pendingRender=false;
 const typing = ()=>{const a=document.activeElement;return a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&document.getElementById('view').contains(a)};
@@ -2217,8 +2488,8 @@ function render(){
   document.querySelector('.datenav').style.visibility=authOnly?'hidden':'';
   const v=document.getElementById('view');
   if(authOnly){v.innerHTML=S.mode==='loading'?'':viewAuth();setSync();return}
-  v.innerHTML = S.tab==='today'?viewToday(k):S.tab==='log'?viewLog(k):S.tab==='food'?viewFood(k):viewBody(k);
-  mountFigs(v); hydratePhotos(v); setSync(); renderRest();
+  v.innerHTML = S.tab==='today'?viewToday(k):S.tab==='log'?viewLog(k):S.tab==='food'?viewFood(k):S.tab==='rank'?rankView(k):viewBody(k);
+  rankDraw(v.querySelector('#rank-map')); mountFigs(v); hydratePhotos(v); setSync(); renderRest();
 }
 
 function viewToday(k){
@@ -2232,7 +2503,7 @@ function viewToday(k){
   if(cn) motiv=`Coach: ${cn}`;
   else if(pid==='rest'&&!lu.length) motiv='No lifting today: hit your steps, eat your protein, sleep 7+ hours.';
   else if(plan.custom&&!lu.length) motiv='Add your exercises below, in the order you’ll do them.';
-  else if(pk) motiv=`Last ${plan.n} day (${nice(pk)}): ${dayVolume(S.days[pk]).toLocaleString()} kg moved. Beat it.`;
+  else if(pk) motiv=`Last ${plan.n} day: ${nice(pk)}. Use the targets on your exercise cards.`;
   else motiv=`First ${plan.n} day of the rebuild. Log every set, the numbers will do the talking.`;
   const prog=dayProgress(k), vol=dayVolume(day);
   let h=`<section class="hero" style="${PV(plan.col)}"><div class="ring"></div>
@@ -2243,7 +2514,8 @@ function viewToday(k){
     ${day.finished?'':'<button class="wbtn" data-act="workouts">Change workout ▾</button>'}
   </section>`;
   if(k===todayKey()&&!num(day.bw)&&!day.finished) h+=`<section class="card"><div class="row between"><h3>Morning weigh-in</h3><label class="field" style="width:120px;flex:none"><input id="bw-t" type="number" inputmode="decimal" step="0.1" placeholder="${esc(latestWeight()||'')}" data-day="bw" aria-label="Today’s weight in kg"><span>kg</span></label></div><div class="small muted">After the toilet, before food. 3 mornings a week is enough for your coach.</div></section>`;
-  if(day.finished) return h+doneCard(k)+cardioCard(k);
+  h+=rankFocusCard(k);
+  if(day.finished) return h+rankRecap(k)+doneCard(k)+cardioCard(k);
   // warm-up
   const warm=day.warm||{}; const wuDone=plan.wu.filter(w=>warm[w]).length;
   let ramp='';
@@ -2300,7 +2572,7 @@ function exCard(k,day,sl,i,L){
   }
   const note=assistOf(id)?' · kg = assist':ex.bw?' · kg = added weight, 0 = bodyweight':'';
   const ssTxt=grp?(grp[0]===i?`<div class="sstag">Superset · 1 set each, back to back, then rest</div>`:''):'';
-  return `<section class="card ex${grp?' ss':''}${grp&&grp[0]!==i?' sscont':''}">${ssTxt}
+  return `<section data-rank-exercise="${esc(id)}" class="card ex${grp?' ss':''}${grp&&grp[0]!==i?' sscont':''}">${ssTxt}
     <div class="exhead"><button class="head" data-act="form" data-kind="ex" data-id="${id}"><span class="thumbwrap">${figTag(ex.an,ex.p,'thumb')}<span class="exn num">${esc(lab)}</span></span><div style="min-width:0"><div class="title">${esc(ex.n)}</div>
       <div class="presc num">${sl.sets} × ${sl.lo}–${sl.hi} reps · rest ${mmss(sl.rest)}${note}${eq.setup?` · ${esc(eq.setup)}`:''}</div><div class="how">Form + cues ›</div></div></button>
       <button class="swapbtn" data-act="slot" data-i="${i}" aria-label="Swap or edit ${esc(ex.n)}">⇄<span>Swap</span></button></div>
@@ -2814,6 +3086,27 @@ document.addEventListener('click',async ev=>{
   if(act==='close'){if(ev.target===el)closeLayer();return}
   switch(act){
     case 'closebtn': closeLayer(); break;
+    case 'rankgroup': {
+      S.rankGroup=el.dataset.g; render();
+      document.querySelector('.rank-pick[aria-pressed="true"]')?.focus({preventScroll:true});
+      break;}
+    case 'rankmap': {
+      const box=el.getBoundingClientRect();
+      const group=rankDraw(el,{x:(ev.clientX-box.left)*el.width/box.width,y:(ev.clientY-box.top)*el.height/box.height});
+      if(group){S.rankGroup=group; render()}
+      break;}
+    case 'rankfocus': {
+      const group=el.dataset.g;
+      if(k!==todayKey()||getDay(k).finished||!MAIN_GROUPS.includes(group))break;
+      const slots=rankOptions(k,group);
+      if(!slots.length)break;
+      const target=Math.min(3,slots.reduce((n,slot)=>n+slot.sets,0));
+      editDay(k).rankFocus={group,target};
+      S.tab='today'; render(); window.scrollTo(0,0); break;}
+    case 'rankclear':
+      if(k===todayKey()&&!getDay(k).finished){delete editDay(k).rankFocus; render()}
+      break;
+    case 'rankexercise': rankJump(el.dataset.id); break;
     case 'tab': S.tab=el.dataset.v; render(); window.scrollTo(0,0); break;
     case 'prev': S.date=addDays(k,-1); render(); break;
     case 'next': S.date=addDays(k,1); render(); break;
@@ -2886,8 +3179,8 @@ document.addEventListener('click',async ev=>{
         const filled=[];
         if(s.w==null&&!s.wu0&&num(phW)!=null){s.w=num(phW);filled.push(`${fmtW(s.w)} kg`)}
         if(s.r==null&&num(phR)!=null){s.r=num(phR);filled.push(`${s.r} reps`)}
-        if(s.w==null&&!s.wu0&&EX[id].bw) s.w=0;
-        if(s.r==null){toast('Enter the reps first.');break}
+        if(s.w==null&&!s.wu0&&EX[id].bw&&!assistOf(id)) s.w=0;
+        if(!(num(s.r)>0)){toast('Enter the reps you completed.');break}
         const prev=bestE1(id,k,i); s.d=true; s.at=Date.now(); if(!d.started) d.started=new Date().toISOString();
         const before=arr.slice(0,i).reverse().find(x=>x&&x.d&&x.at); if(before) s.rest=Math.round((s.at-before.at)/1000);
         S.rirFor=isWU(s)?null:`${id}|${i}`; S.setMenu=null;
@@ -2929,6 +3222,7 @@ document.addEventListener('click',async ev=>{
       if(d.full){d.lineup=d.full; delete d.full; toast('Back to the full session'); render(); break}
       openShort(); break;}
     case 'shortgo': {const d=editDay(k), lu=lineupFor(d,k), r=pickShort(lu,+el.dataset.m,k);
+      if(!r.keep.length){toast('No remaining exercise group fits that time.');break}
       d.full=clone(lu); d.lineup=r.keep.map(i=>lu[i]); closeLayer(); render(); window.scrollTo(0,0);
       toast(`Short session, about ${r.used} min: ${d.lineup.map(s=>exOf(s.ex).n).join(', ')}`); break;}
     case 'setmenu': S.setMenu=S.setMenu===el.dataset.k?null:el.dataset.k; S.rirFor=null; render(); break;
@@ -2951,7 +3245,7 @@ document.addEventListener('click',async ev=>{
       for(const r of rows){let id=r.cands[r.pick||0];
         if(!id){id='x_'+uid().slice(0,8); const nm=(r.name||'Exercise').replace(/^\w/,c=>c.toUpperCase()); S.customEx[id]={n:nm,g:guessGroup(nm)}; queueSave('exercises/'+id); applyCustomEx()}
         if(!lu.some(s=>s.ex===id)) lu.push({...slotOf(id,exOf(id).sc),sets:r.sets});
-        const arr=d.sets[id]=(d.sets[id]||[]).filter(s=>s&&s.d), bw=exOf(id).bw;
+        const arr=d.sets[id]=(d.sets[id]||[]).filter(s=>s&&s.d), bw=exOf(id).bw&&!assistOf(id);
         for(let j=0;j<r.sets;j++) arr.push(r.w!=null?{d:true,r:r.reps,w:r.w,src:'text'}:bw?{d:true,r:r.reps,w:0,src:'text'}:{d:true,r:r.reps,w:null,wu0:true,src:'text'});
       }
       S.textLog=null; closeLayer(); render(); toast(`Added ${rows.length} exercise${rows.length>1?'s':''} from text`); break;}
